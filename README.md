@@ -93,6 +93,12 @@ git pull
 git checkout yourBranch
 git merge origin/dev
 ```
+
+or one line:
+`git pull origin dev`
+<br><br>
+*git pull origin dev tells Git: "Go to the origin remote, get the latest version of the dev branch, and merge it directly into the branch I am on right now (yourBranch)."*
+
 # Branch naming convention
 Name-Feature
 <br>
