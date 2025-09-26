@@ -93,6 +93,10 @@ git pull
 git checkout yourBranch
 git merge origin/dev
 ```
+
+or one line:
+`git pull origin dev`
+
 # Branch naming convention
 Name-Feature
 <br>
