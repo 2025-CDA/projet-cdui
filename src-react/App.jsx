@@ -164,7 +164,7 @@ export default function App() {
 
     return (
         <div>
-            <h1>Test Array</h1>
+            <h1 className={"bg-amber-500"}>Test Array</h1>
             <ul>
                 {data.map((item) => (
                     <li key={item.id}>{item.name}</li>
