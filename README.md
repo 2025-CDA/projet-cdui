@@ -67,6 +67,18 @@ git push
 git push -u origin yourBranch
 ```
 
+`git config --global push.autoSetupRemote true`
+<br>
+*Note that if you use this command (only once) you don't have to use the command:*
+<br>
+`git push -u origin yourBranch`
+<br>
+*anymore, instead you can just use:*
+<br>
+`git push`
+<br>
+*and the upstream will be setup automatically to your new branch*
+
 # Create / switch local branches
 ```
 git branch branchname          # create (stay on current branch)
@@ -77,8 +89,9 @@ git checkout -b branchname     # create AND switch in one command
 # Common sync sequence
 ```
 git checkout dev
-git pull origin dev
+git pull
 git checkout yourBranch
+git merge origin/dev
 ```
 # Branch naming convention
 Name-Feature
