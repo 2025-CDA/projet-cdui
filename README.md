@@ -1,6 +1,6 @@
-je mappel amine
-
 # Project Setup and Usage
+
+YOUUUUUUUHHHHHOUUUUUUU 1h30h avant le week end 
 
 This document provides instructions on how to install the project's dependencies and run it in a development environment.
 
