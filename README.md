@@ -53,4 +53,34 @@ This is the minimum required to run the application. You will need **two separat
     ```
     > **Note:** With this setup, you will need to **manually refresh your browser** to see any frontend changes.
 
----
+<br>
+
+## 💻 Git Commands Reminder
+<br>
+
+# Basic workflow
+```
+git add .
+git commit -m "commit comment"
+git push
+# Push and create the branch on remote if it doesn't exist (sets upstream)
+git push -u origin yourBranch
+```
+
+# Create / switch local branches
+```
+git branch branchname          # create (stay on current branch)
+git checkout branchname        # switch to an existing branch
+git checkout -b branchname     # create AND switch in one command
+```
+
+# Common sync sequence
+```
+git checkout dev
+git pull origin dev
+git checkout yourBranch
+```
+# Branch naming convention
+Name-Feature
+<br>
+Example: Amine-Feature
