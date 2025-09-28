@@ -69,7 +69,8 @@ git push -u origin yourBranch
 
 `git config --global push.autoSetupRemote true`
 <br>
-*Note that if you use this command (only once) you don't have to use the command:*
+**Highly Recommended :**
+*If you use this command (only once) you don't have to use the command:*
 <br>
 `git push -u origin yourBranch`
 <br>
