@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Gender;
 use App\Repository\InfoFormInternRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,9 @@ class InfoFormIntern
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
+
+    #[ORM\Column(nullable: true, enumType: Gender::class)]
+    private ?Gender $gender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
@@ -35,6 +39,18 @@ class InfoFormIntern
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?Gender $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
     }
 
     public function getLastName(): ?string
