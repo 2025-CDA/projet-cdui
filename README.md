@@ -11,7 +11,7 @@ Follow these steps for the initial one-time setup of the project.
     ```bash
     composer install
     ```
-
+    <br>
 2.  **Install JavaScript Dependencies:**
     Install all the required JavaScript packages.
     ```bash
@@ -19,13 +19,27 @@ Follow these steps for the initial one-time setup of the project.
     ```
     *(If you do have `pnpm`, you can use `pnpm install` instead).*
     <br><br>
-3.  **Create the Database:**
+3.  **Configure Environment Variables:**
+    Create a `.env.local` file at the root of the project. Copy the contents of the `.env` file into your new `.env.local` file. Then, modify the `DATABASE_URL` variable to match your local database setup. Uncomment the appropriate line for your database system (e.g., MySQL) and update the credentials.
+
+    For example:
+    ```
+    # DATABASE_URL="sqlite:///%kernel.project_dir%/var/data_%kernel.environment%.db"
+    DATABASE_URL="mysql://root:@127.0.0.1:3306/easypae?serverVersion=8.0.32&charset=utf8mb4"
+    # DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/easypae?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
+    # DATABASE_URL="postgresql://app:!ChangeMe!@127.0.0.1:5432/easypae?serverVersion=16&charset=utf8"
+    ```
+    <br>
+4.  **Create the Database:**
     This command will create the database if it doesn't already exist.
     ```bash
     symfony console doctrine:database:create
     ```
+    > **Note:** You only need to run this command once for the initial project setup.
+    > 
+    <br>
 
-4.  **Run Database Migrations:**
+5.  **Run Database Migrations:**
     This command will apply all necessary database schema changes.
     ```bash
     symfony console doctrine:migrations:migrate
