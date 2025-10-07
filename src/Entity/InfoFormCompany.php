@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\Gender;
+use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,6 +40,9 @@ class InfoFormCompany
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stamp = null;
 
+    #[ORM\Column(nullable: true, enumType: Gender::class)]
+    private ?Gender $legalRepresentativeGender = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $legalRepresentativeLastName = null;
 
@@ -49,6 +54,9 @@ class InfoFormCompany
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $interviewEndDateTime = null;
+
+    #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
+    private ?WorkLocation $workLocation = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $agreeTerms = null;
@@ -70,7 +78,6 @@ class InfoFormCompany
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $activitiesCaption = null;
-
 
     public function getId(): ?int
     {
@@ -173,6 +180,18 @@ class InfoFormCompany
         return $this;
     }
 
+    public function getLegalRepresentativeGender(): ?Gender
+    {
+        return $this->legalRepresentativeGender;
+    }
+
+    public function setLegalRepresentativeGender(?Gender $legalRepresentativeGender): static
+    {
+        $this->legalRepresentativeGender = $legalRepresentativeGender;
+
+        return $this;
+    }
+
     public function getLegalRepresentativeLastName(): ?string
     {
         return $this->legalRepresentativeLastName;
@@ -217,6 +236,18 @@ class InfoFormCompany
     public function setInterviewEndDateTime(?\DateTimeImmutable $interviewEndDateTime): static
     {
         $this->interviewEndDateTime = $interviewEndDateTime;
+
+        return $this;
+    }
+
+    public function getWorkLocation(): ?WorkLocation
+    {
+        return $this->workLocation;
+    }
+
+    public function setWorkLocation(?WorkLocation $workLocation): static
+    {
+        $this->workLocation = $workLocation;
 
         return $this;
     }
@@ -304,5 +335,4 @@ class InfoFormCompany
 
         return $this;
     }
-
 }
