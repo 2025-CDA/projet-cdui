@@ -4,6 +4,10 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
+    server: {
+        // This forces Vite to use the IPv4 loopback address
+        host: '127.0.0.1'
+    },
     plugins: [
         react(),
         tailwindcss({
@@ -28,7 +32,7 @@ export default defineConfig({
                     "w-[71%]", "w-[72%]", "w-[73%]", "w-[74%]", "w-[75%]", "w-[76%]", "w-[77%]", "w-[78%]", "w-[79%]", "w-[80%]",
                     "w-[81%]", "w-[82%]", "w-[83%]", "w-[84%]", "w-[85%]", "w-[86%]", "w-[87%]", "w-[88%]", "w-[89%]", "w-[90%]",
                     "w-[91%]", "w-[92%]", "w-[93%]", "w-[94%]", "w-[95%]", "w-[96%]", "w-[97%]", "w-[98%]", "w-[99%]", "w-[100%]",
-                    
+
                     // --- BACKGROUND COLORS ---
                     'bg-slate-50', 'bg-slate-100', 'bg-slate-200', 'bg-slate-300', 'bg-slate-400', 'bg-slate-500', 'bg-slate-600', 'bg-slate-700', 'bg-slate-800', 'bg-slate-900', 'bg-slate-950',
                     'bg-gray-50', 'bg-gray-100', 'bg-gray-200', 'bg-gray-300', 'bg-gray-400', 'bg-gray-500', 'bg-gray-600', 'bg-gray-700', 'bg-gray-800', 'bg-gray-900', 'bg-gray-950',
