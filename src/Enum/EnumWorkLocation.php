@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum WorkLocation: string
+enum EnumWorkLocation: string
 {
     case ON_SITE = 'Présentiel';
 

@@ -20,6 +20,9 @@ class InfoFormOrganization
     #[ORM\Column(length: 255)]
     private ?string $signature = null;
 
+    #[ORM\OneToOne(mappedBy: 'infoFormOrganization', cascade: ['persist', 'remove'])]
+    private ?InfoForm $infoForm = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,28 @@ class InfoFormOrganization
     public function setSignature(string $signature): static
     {
         $this->signature = $signature;
+
+        return $this;
+    }
+
+    public function getInfoForm(): ?InfoForm
+    {
+        return $this->infoForm;
+    }
+
+    public function setInfoForm(?InfoForm $infoForm): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infoForm === null && $this->infoForm !== null) {
+            $this->infoForm->setInfoFormOrganization(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infoForm !== null && $infoForm->getInfoFormOrganization() !== $this) {
+            $infoForm->setInfoFormOrganization($this);
+        }
+
+        $this->infoForm = $infoForm;
 
         return $this;
     }
