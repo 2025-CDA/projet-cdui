@@ -34,6 +34,9 @@ class CalendarFormDetail
     #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
     private ?EnumWorkLocation $workLocation = null;
 
+    #[ORM\ManyToOne(inversedBy: 'calendarFormDetails')]
+    private ?InfoFormCompany $infoFormCompany = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +110,18 @@ class CalendarFormDetail
     public function setWorkLocation(?EnumWorkLocation $workLocation): static
     {
         $this->workLocation = $workLocation;
+
+        return $this;
+    }
+
+    public function getInfoFormCompany(): ?InfoFormCompany
+    {
+        return $this->infoFormCompany;
+    }
+
+    public function setInfoFormCompany(?InfoFormCompany $infoFormCompany): static
+    {
+        $this->infoFormCompany = $infoFormCompany;
 
         return $this;
     }
