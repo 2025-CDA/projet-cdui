@@ -7,6 +7,8 @@ use App\Enum\EnumWorkLocation;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -83,6 +85,17 @@ class InfoFormCompany
 
     #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
     private ?EnumWorkLocation $workLocation = null;
+
+    /**
+     * @var Collection<int, CalendarFormDetail>
+     */
+    #[ORM\OneToMany(targetEntity: CalendarFormDetail::class, mappedBy: 'infoFormCompany')]
+    private Collection $calendarFormDetails;
+
+    public function __construct()
+    {
+        $this->calendarFormDetails = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -360,6 +373,36 @@ class InfoFormCompany
     public function setWorkLocation(?EnumWorkLocation $workLocation): static
     {
         $this->workLocation = $workLocation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CalendarFormDetail>
+     */
+    public function getCalendarFormDetails(): Collection
+    {
+        return $this->calendarFormDetails;
+    }
+
+    public function addCalendarFormDetail(CalendarFormDetail $calendarFormDetail): static
+    {
+        if (!$this->calendarFormDetails->contains($calendarFormDetail)) {
+            $this->calendarFormDetails->add($calendarFormDetail);
+            $calendarFormDetail->setInfoFormCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCalendarFormDetail(CalendarFormDetail $calendarFormDetail): static
+    {
+        if ($this->calendarFormDetails->removeElement($calendarFormDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($calendarFormDetail->getInfoFormCompany() === $this) {
+                $calendarFormDetail->setInfoFormCompany(null);
+            }
+        }
 
         return $this;
     }
