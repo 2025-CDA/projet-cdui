@@ -18,9 +18,6 @@ class InfoFormIntern
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
-    #[ORM\Column(nullable: true, enumType: Gender::class)]
-    private ?Gender $gender = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
@@ -36,22 +33,14 @@ class InfoFormIntern
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $endDate = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $email = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getGender(): ?Gender
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?Gender $gender): static
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
 
     public function getLastName(): ?string
     {
@@ -121,6 +110,18 @@ class InfoFormIntern
     public function setEndDate(?\DateTimeImmutable $endDate): static
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
 
         return $this;
     }
