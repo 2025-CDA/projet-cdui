@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\EnumGender;
+use App\Enum\EnumWorkLocation;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
@@ -72,6 +74,15 @@ class InfoFormCompany
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $activitiesCaption = null;
+
+    #[ORM\OneToOne(mappedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
+    private ?InfoForm $infoForm = null;
+
+    #[ORM\Column(nullable: true, enumType: EnumGender::class)]
+    private ?EnumGender $gender = null;
+
+    #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
+    private ?EnumWorkLocation $workLocation = null;
 
     public function getId(): ?int
     {
@@ -303,6 +314,52 @@ class InfoFormCompany
     public function setActivitiesCaption(?string $activitiesCaption): static
     {
         $this->activitiesCaption = $activitiesCaption;
+
+        return $this;
+    }
+
+    public function getInfoForm(): ?InfoForm
+    {
+        return $this->infoForm;
+    }
+
+    public function setInfoForm(?InfoForm $infoForm): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infoForm === null && $this->infoForm !== null) {
+            $this->infoForm->setInfoFormCompany(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infoForm !== null && $infoForm->getInfoFormCompany() !== $this) {
+            $infoForm->setInfoFormCompany($this);
+        }
+
+        $this->infoForm = $infoForm;
+
+        return $this;
+    }
+
+    public function getGender(): ?EnumGender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?EnumGender $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getWorkLocation(): ?EnumWorkLocation
+    {
+        return $this->workLocation;
+    }
+
+    public function setWorkLocation(?EnumWorkLocation $workLocation): static
+    {
+        $this->workLocation = $workLocation;
 
         return $this;
     }

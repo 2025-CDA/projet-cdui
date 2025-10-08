@@ -14,22 +14,50 @@ class TrainingCourse
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $formationName = null;
+    private ?string $name = null;
+
+    #[ORM\OneToOne(mappedBy: 'trainingCourse', cascade: ['persist', 'remove'])]
+    private ?TrainingCourseSession $trainingCourseSession = null;
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getFormationName(): ?string
+    public function getName(): ?string
     {
-        return $this->formationName;
+        return $this->name;
     }
 
-    public function setFormationName(?string $formationName): static
+    public function setName(?string $name): static
     {
-        $this->formationName = $formationName;
+        $this->name = $name;
 
         return $this;
     }
+
+    public function getTrainingCourseSession(): ?TrainingCourseSession
+    {
+        return $this->trainingCourseSession;
+    }
+
+    public function setTrainingCourseSession(?TrainingCourseSession $trainingCourseSession): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($trainingCourseSession === null && $this->trainingCourseSession !== null) {
+            $this->trainingCourseSession->setTrainingCourse(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($trainingCourseSession !== null && $trainingCourseSession->getTrainingCourse() !== $this) {
+            $trainingCourseSession->setTrainingCourse($this);
+        }
+
+        $this->trainingCourseSession = $trainingCourseSession;
+
+        return $this;
+    }
+
+
 }

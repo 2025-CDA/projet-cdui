@@ -25,6 +25,9 @@ class InfoFormInternCompany
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $contactName = null;
 
+    #[ORM\OneToOne(mappedBy: 'infoFormInternCompany', cascade: ['persist', 'remove'])]
+    private ?InfoFormIntern $infoFormIntern = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,28 @@ class InfoFormInternCompany
     public function setContactName(?string $contactName): static
     {
         $this->contactName = $contactName;
+
+        return $this;
+    }
+
+    public function getInfoFormIntern(): ?InfoFormIntern
+    {
+        return $this->infoFormIntern;
+    }
+
+    public function setInfoFormIntern(?InfoFormIntern $infoFormIntern): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infoFormIntern === null && $this->infoFormIntern !== null) {
+            $this->infoFormIntern->setInfoFormInternCompany(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infoFormIntern !== null && $infoFormIntern->getInfoFormInternCompany() !== $this) {
+            $infoFormIntern->setInfoFormInternCompany($this);
+        }
+
+        $this->infoFormIntern = $infoFormIntern;
 
         return $this;
     }

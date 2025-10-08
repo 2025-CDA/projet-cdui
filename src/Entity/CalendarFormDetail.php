@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EnumWorkLocation;
 use App\Enum\WeekDays;
 use App\Repository\CalendarFormDetailRepository;
 use Doctrine\DBAL\Types\Types;
@@ -29,6 +30,9 @@ class CalendarFormDetail
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $endAfternoon = null;
+
+    #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
+    private ?EnumWorkLocation $workLocation = null;
 
     public function getId(): ?int
     {
@@ -91,6 +95,18 @@ class CalendarFormDetail
     public function setEndAfternoon(?\DateTimeImmutable $endAfternoon): static
     {
         $this->endAfternoon = $endAfternoon;
+
+        return $this;
+    }
+
+    public function getWorkLocation(): ?EnumWorkLocation
+    {
+        return $this->workLocation;
+    }
+
+    public function setWorkLocation(?EnumWorkLocation $workLocation): static
+    {
+        $this->workLocation = $workLocation;
 
         return $this;
     }
