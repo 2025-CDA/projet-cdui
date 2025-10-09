@@ -4,13 +4,11 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -33,26 +31,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $idLogin = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Organization $organization = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $lastName = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Intern $intern = null;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Company $company = null;
-
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Trainer $trainer = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $login = null;
 
     public function getId(): ?int
     {
@@ -124,8 +110,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
-        
+        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+
         return $data;
     }
 
@@ -135,14 +121,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // @deprecated, to be removed when upgrading to Symfony 8
     }
 
-    public function getIdLogin(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->idLogin;
+        return $this->firstName;
     }
 
-    public function setIdLogin(string $idLogin): static
+    public function setFirstName(?string $firstName): static
     {
-        $this->idLogin = $idLogin;
+        $this->firstName = $firstName;
 
         return $this;
     }
@@ -152,69 +138,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getLogin(): ?string
     {
-        return $this->firstName;
+        return $this->login;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setLogin(?string $login): static
     {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getOrganization(): ?Organization
-    {
-        return $this->organization;
-    }
-
-    public function setOrganization(?Organization $organization): static
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    public function getIntern(): ?Intern
-    {
-        return $this->intern;
-    }
-
-    public function setIntern(?Intern $intern): static
-    {
-        $this->intern = $intern;
-
-        return $this;
-    }
-
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
-
-    public function setCompany(?Company $company): static
-    {
-        $this->company = $company;
-
-        return $this;
-    }
-
-    public function getTrainer(): ?Trainer
-    {
-        return $this->trainer;
-    }
-
-    public function setTrainer(?Trainer $trainer): static
-    {
-        $this->trainer = $trainer;
+        $this->login = $login;
 
         return $this;
     }

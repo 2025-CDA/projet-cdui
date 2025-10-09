@@ -14,14 +14,11 @@ class InfoFormOrganization
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $validationDate = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $signature = null;
-
-    #[ORM\OneToOne(mappedBy: 'infoFormOrganization', cascade: ['persist', 'remove'])]
-    private ?InfoForm $infoForm = null;
 
     public function getId(): ?int
     {
@@ -33,7 +30,7 @@ class InfoFormOrganization
         return $this->validationDate;
     }
 
-    public function setValidationDate(\DateTimeImmutable $validationDate): static
+    public function setValidationDate(?\DateTimeImmutable $validationDate): static
     {
         $this->validationDate = $validationDate;
 
@@ -45,31 +42,9 @@ class InfoFormOrganization
         return $this->signature;
     }
 
-    public function setSignature(string $signature): static
+    public function setSignature(?string $signature): static
     {
         $this->signature = $signature;
-
-        return $this;
-    }
-
-    public function getInfoForm(): ?InfoForm
-    {
-        return $this->infoForm;
-    }
-
-    public function setInfoForm(?InfoForm $infoForm): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($infoForm === null && $this->infoForm !== null) {
-            $this->infoForm->setInfoFormOrganization(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($infoForm !== null && $infoForm->getInfoFormOrganization() !== $this) {
-            $infoForm->setInfoFormOrganization($this);
-        }
-
-        $this->infoForm = $infoForm;
 
         return $this;
     }

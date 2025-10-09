@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\OrganizationRepository;
+use App\Repository\TrainingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: OrganizationRepository::class)]
-class Organization
+#[ORM\Entity(repositoryClass: TrainingRepository::class)]
+class Training
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -14,26 +14,11 @@ class Organization
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $siret = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSiret(): ?string
-    {
-        return $this->siret;
-    }
-
-    public function setSiret(?string $siret): static
-    {
-        $this->siret = $siret;
-
-        return $this;
     }
 
     public function getName(): ?string
