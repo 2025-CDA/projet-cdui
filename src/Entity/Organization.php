@@ -15,28 +15,28 @@ class Organization
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $siret = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $organization_name = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, OrganizationMember>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'organization')]
-    private Collection $users;
+    #[ORM\OneToMany(targetEntity: OrganizationMember::class, mappedBy: 'organization')]
+    private Collection $organizationMembers;
 
     /**
      * @var Collection<int, InfoForm>
      */
-    #[ORM\ManyToMany(targetEntity: InfoForm::class, inversedBy: 'organizations')]
-    private Collection $infoForm;
+    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'organization')]
+    private Collection $infoForms;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
-        $this->infoForm = new ArrayCollection();
+        $this->organizationMembers = new ArrayCollection();
+        $this->infoForms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,49 +49,49 @@ class Organization
         return $this->siret;
     }
 
-    public function setSiret(string $siret): static
+    public function setSiret(?string $siret): static
     {
         $this->siret = $siret;
 
         return $this;
     }
 
-    public function getOrganizationName(): ?string
+    public function getName(): ?string
     {
-        return $this->organization_name;
+        return $this->name;
     }
 
-    public function setOrganizationName(?string $organization_name): static
+    public function setName(?string $name): static
     {
-        $this->organization_name = $organization_name;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, OrganizationMember>
      */
-    public function getUsers(): Collection
+    public function getOrganizationMembers(): Collection
     {
-        return $this->users;
+        return $this->organizationMembers;
     }
 
-    public function addUser(User $user): static
+    public function addOrganizationMember(OrganizationMember $organizationMember): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setOrganization($this);
+        if (!$this->organizationMembers->contains($organizationMember)) {
+            $this->organizationMembers->add($organizationMember);
+            $organizationMember->setOrganization($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeOrganizationMember(OrganizationMember $organizationMember): static
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->organizationMembers->removeElement($organizationMember)) {
             // set the owning side to null (unless already changed)
-            if ($user->getOrganization() === $this) {
-                $user->setOrganization(null);
+            if ($organizationMember->getOrganization() === $this) {
+                $organizationMember->setOrganization(null);
             }
         }
 
@@ -101,15 +101,16 @@ class Organization
     /**
      * @return Collection<int, InfoForm>
      */
-    public function getInfoForm(): Collection
+    public function getInfoForms(): Collection
     {
-        return $this->infoForm;
+        return $this->infoForms;
     }
 
     public function addInfoForm(InfoForm $infoForm): static
     {
-        if (!$this->infoForm->contains($infoForm)) {
-            $this->infoForm->add($infoForm);
+        if (!$this->infoForms->contains($infoForm)) {
+            $this->infoForms->add($infoForm);
+            $infoForm->setOrganization($this);
         }
 
         return $this;
@@ -117,7 +118,12 @@ class Organization
 
     public function removeInfoForm(InfoForm $infoForm): static
     {
-        $this->infoForm->removeElement($infoForm);
+        if ($this->infoForms->removeElement($infoForm)) {
+            // set the owning side to null (unless already changed)
+            if ($infoForm->getOrganization() === $this) {
+                $infoForm->setOrganization(null);
+            }
+        }
 
         return $this;
     }
