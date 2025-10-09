@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
@@ -21,6 +23,17 @@ class Company
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phoneNumber = null;
+
+    /**
+     * @var Collection<int, CompanyMember>
+     */
+    #[ORM\OneToMany(targetEntity: CompanyMember::class, mappedBy: 'company')]
+    private Collection $companyMembers;
+
+    public function __construct()
+    {
+        $this->companyMembers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -59,6 +72,36 @@ class Company
     public function setPhoneNumber(?string $phoneNumber): static
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CompanyMember>
+     */
+    public function getCompanyMembers(): Collection
+    {
+        return $this->companyMembers;
+    }
+
+    public function addCompanyMember(CompanyMember $companyMember): static
+    {
+        if (!$this->companyMembers->contains($companyMember)) {
+            $this->companyMembers->add($companyMember);
+            $companyMember->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompanyMember(CompanyMember $companyMember): static
+    {
+        if ($this->companyMembers->removeElement($companyMember)) {
+            // set the owning side to null (unless already changed)
+            if ($companyMember->getCompany() === $this) {
+                $companyMember->setCompany(null);
+            }
+        }
 
         return $this;
     }

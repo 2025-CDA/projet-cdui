@@ -20,6 +20,9 @@ class InfoFormIntern
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateEnd = null;
 
+    #[ORM\OneToOne(mappedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
+    private ?InfoForm $infoForm = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,28 @@ class InfoFormIntern
     public function setDateEnd(?\DateTimeImmutable $dateEnd): static
     {
         $this->dateEnd = $dateEnd;
+
+        return $this;
+    }
+
+    public function getInfoForm(): ?InfoForm
+    {
+        return $this->infoForm;
+    }
+
+    public function setInfoForm(?InfoForm $infoForm): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infoForm === null && $this->infoForm !== null) {
+            $this->infoForm->setInfoFormIntern(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infoForm !== null && $infoForm->getInfoFormIntern() !== $this) {
+            $infoForm->setInfoFormIntern($this);
+        }
+
+        $this->infoForm = $infoForm;
 
         return $this;
     }

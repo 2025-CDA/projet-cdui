@@ -34,6 +34,9 @@ class InfoFormCompanyCalendarRow
     #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
     private ?WorkLocation $workLocation = null;
 
+    #[ORM\ManyToOne(inversedBy: 'infoFormCompanyCalendarRow')]
+    private ?InfoFormCompany $infoFormCompany = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +110,18 @@ class InfoFormCompanyCalendarRow
     public function setWorkLocation(?WorkLocation $workLocation): static
     {
         $this->workLocation = $workLocation;
+
+        return $this;
+    }
+
+    public function getInfoFormCompany(): ?InfoFormCompany
+    {
+        return $this->infoFormCompany;
+    }
+
+    public function setInfoFormCompany(?InfoFormCompany $infoFormCompany): static
+    {
+        $this->infoFormCompany = $infoFormCompany;
 
         return $this;
     }

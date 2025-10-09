@@ -40,6 +40,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $login = null;
 
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?CompanyMember $companyMember = null;
+
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?OrganizationMember $organizationMember = null;
+
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?InternMember $internMember = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -153,6 +162,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogin(?string $login): static
     {
         $this->login = $login;
+
+        return $this;
+    }
+
+    public function getCompanyMember(): ?CompanyMember
+    {
+        return $this->companyMember;
+    }
+
+    public function setCompanyMember(?CompanyMember $companyMember): static
+    {
+        $this->companyMember = $companyMember;
+
+        return $this;
+    }
+
+    public function getOrganizationMember(): ?OrganizationMember
+    {
+        return $this->organizationMember;
+    }
+
+    public function setOrganizationMember(?OrganizationMember $organizationMember): static
+    {
+        $this->organizationMember = $organizationMember;
+
+        return $this;
+    }
+
+    public function getInternMember(): ?InternMember
+    {
+        return $this->internMember;
+    }
+
+    public function setInternMember(?InternMember $internMember): static
+    {
+        $this->internMember = $internMember;
 
         return $this;
     }

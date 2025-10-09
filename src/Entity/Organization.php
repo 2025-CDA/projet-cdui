@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OrganizationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
@@ -18,6 +20,17 @@ class Organization
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
+
+    /**
+     * @var Collection<int, OrganizationMember>
+     */
+    #[ORM\OneToMany(targetEntity: OrganizationMember::class, mappedBy: 'organization')]
+    private Collection $organizationMembers;
+
+    public function __construct()
+    {
+        $this->organizationMembers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,6 +57,36 @@ class Organization
     public function setName(?string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrganizationMember>
+     */
+    public function getOrganizationMembers(): Collection
+    {
+        return $this->organizationMembers;
+    }
+
+    public function addOrganizationMember(OrganizationMember $organizationMember): static
+    {
+        if (!$this->organizationMembers->contains($organizationMember)) {
+            $this->organizationMembers->add($organizationMember);
+            $organizationMember->setOrganization($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganizationMember(OrganizationMember $organizationMember): static
+    {
+        if ($this->organizationMembers->removeElement($organizationMember)) {
+            // set the owning side to null (unless already changed)
+            if ($organizationMember->getOrganization() === $this) {
+                $organizationMember->setOrganization(null);
+            }
+        }
 
         return $this;
     }

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -69,6 +71,23 @@ class InfoFormCompany
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tutorPhoneNumber = null;
+
+    #[ORM\OneToOne(mappedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
+    private ?InfoForm $infoForm = null;
+
+    /**
+     * @var Collection<int, InfoFormCompanyCalendarRow>
+     */
+    #[ORM\OneToMany(targetEntity: InfoFormCompanyCalendarRow::class, mappedBy: 'infoFormCompany')]
+    private Collection $infoFormCompanyCalendarRow;
+
+    #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
+    private ?InfoFormInternCompany $infoFormInternCompany = null;
+
+    public function __construct()
+    {
+        $this->infoFormCompanyCalendarRow = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -287,6 +306,70 @@ class InfoFormCompany
     public function setTutorPhoneNumber(?string $tutorPhoneNumber): static
     {
         $this->tutorPhoneNumber = $tutorPhoneNumber;
+
+        return $this;
+    }
+
+    public function getInfoForm(): ?InfoForm
+    {
+        return $this->infoForm;
+    }
+
+    public function setInfoForm(?InfoForm $infoForm): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infoForm === null && $this->infoForm !== null) {
+            $this->infoForm->setInfoFormCompany(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infoForm !== null && $infoForm->getInfoFormCompany() !== $this) {
+            $infoForm->setInfoFormCompany($this);
+        }
+
+        $this->infoForm = $infoForm;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InfoFormCompanyCalendarRow>
+     */
+    public function getInfoFormCompanyCalendarRow(): Collection
+    {
+        return $this->infoFormCompanyCalendarRow;
+    }
+
+    public function addInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
+    {
+        if (!$this->infoFormCompanyCalendarRow->contains($infoFormCompanyCalendarRow)) {
+            $this->infoFormCompanyCalendarRow->add($infoFormCompanyCalendarRow);
+            $infoFormCompanyCalendarRow->setInfoFormCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
+    {
+        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow)) {
+            // set the owning side to null (unless already changed)
+            if ($infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
+                $infoFormCompanyCalendarRow->setInfoFormCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getInfoFormInternCompany(): ?InfoFormInternCompany
+    {
+        return $this->infoFormInternCompany;
+    }
+
+    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
+    {
+        $this->infoFormInternCompany = $infoFormInternCompany;
 
         return $this;
     }
