@@ -2,30 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\InternRepository;
+use App\Repository\InternMemberRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: InternRepository::class)]
-class Intern
+#[ORM\Entity(repositoryClass: InternMemberRepository::class)]
+class InternMember
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(mappedBy: 'intern', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'internMember', cascade: ['persist', 'remove'])]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, TrainingSession>
+     */
+    #[ORM\ManyToMany(targetEntity: TrainingSession::class, inversedBy: 'internMembers')]
+    private Collection $trainingSession;
 
     /**
      * @var Collection<int, InfoForm>
      */
-    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'intern')]
+    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'internMember')]
     private Collection $infoForm;
 
     public function __construct()
     {
+        $this->trainingSession = new ArrayCollection();
         $this->infoForm = new ArrayCollection();
     }
 
@@ -43,15 +50,39 @@ class Intern
     {
         // unset the owning side of the relation if necessary
         if ($user === null && $this->user !== null) {
-            $this->user->setIntern(null);
+            $this->user->setInternMember(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($user !== null && $user->getIntern() !== $this) {
-            $user->setIntern($this);
+        if ($user !== null && $user->getInternMember() !== $this) {
+            $user->setInternMember($this);
         }
 
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TrainingSession>
+     */
+    public function getTrainingSession(): Collection
+    {
+        return $this->trainingSession;
+    }
+
+    public function addTrainingSession(TrainingSession $trainingSession): static
+    {
+        if (!$this->trainingSession->contains($trainingSession)) {
+            $this->trainingSession->add($trainingSession);
+        }
+
+        return $this;
+    }
+
+    public function removeTrainingSession(TrainingSession $trainingSession): static
+    {
+        $this->trainingSession->removeElement($trainingSession);
 
         return $this;
     }
@@ -68,7 +99,7 @@ class Intern
     {
         if (!$this->infoForm->contains($infoForm)) {
             $this->infoForm->add($infoForm);
-            $infoForm->setIntern($this);
+            $infoForm->setInternMember($this);
         }
 
         return $this;
@@ -78,8 +109,8 @@ class Intern
     {
         if ($this->infoForm->removeElement($infoForm)) {
             // set the owning side to null (unless already changed)
-            if ($infoForm->getIntern() === $this) {
-                $infoForm->setIntern(null);
+            if ($infoForm->getInternMember() === $this) {
+                $infoForm->setInternMember(null);
             }
         }
 

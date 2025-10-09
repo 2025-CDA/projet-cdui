@@ -2,22 +2,22 @@
 
 namespace App\Entity;
 
-use App\Enum\EnumWorkLocation;
-use App\Enum\WeekDays;
-use App\Repository\CalendarFormDetailRepository;
+use App\Enum\WeekDay;
+use App\Enum\WorkLocation;
+use App\Repository\InfoFormCompanyCalendarRowRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CalendarFormDetailRepository::class)]
-class CalendarFormDetail
+#[ORM\Entity(repositoryClass: InfoFormCompanyCalendarRowRepository::class)]
+class InfoFormCompanyCalendarRow
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true, enumType: WeekDays::class)]
-    private ?WeekDays $day = null;
+    #[ORM\Column(nullable: true, enumType: WeekDay::class)]
+    private ?WeekDay $day = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $startMorning = null;
@@ -31,10 +31,10 @@ class CalendarFormDetail
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $endAfternoon = null;
 
-    #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
-    private ?EnumWorkLocation $workLocation = null;
+    #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
+    private ?WorkLocation $workLocation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'calendarFormDetails')]
+    #[ORM\ManyToOne(inversedBy: 'infoFormCompanyCalendarRow')]
     private ?InfoFormCompany $infoFormCompany = null;
 
     public function getId(): ?int
@@ -42,12 +42,12 @@ class CalendarFormDetail
         return $this->id;
     }
 
-    public function getDay(): ?WeekDays
+    public function getDay(): ?WeekDay
     {
         return $this->day;
     }
 
-    public function setDay(?WeekDays $day): static
+    public function setDay(?WeekDay $day): static
     {
         $this->day = $day;
 
@@ -102,12 +102,12 @@ class CalendarFormDetail
         return $this;
     }
 
-    public function getWorkLocation(): ?EnumWorkLocation
+    public function getWorkLocation(): ?WorkLocation
     {
         return $this->workLocation;
     }
 
-    public function setWorkLocation(?EnumWorkLocation $workLocation): static
+    public function setWorkLocation(?WorkLocation $workLocation): static
     {
         $this->workLocation = $workLocation;
 

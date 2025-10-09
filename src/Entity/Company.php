@@ -15,31 +15,31 @@ class Company
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $companyName = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $siret = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $phoneNumber = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, CompanyMember>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'company')]
-    private Collection $users;
+    #[ORM\OneToMany(targetEntity: CompanyMember::class, mappedBy: 'company')]
+    private Collection $companyMembers;
 
     /**
      * @var Collection<int, InfoForm>
      */
-    #[ORM\ManyToMany(targetEntity: InfoForm::class, inversedBy: 'companies')]
-    private Collection $infoForm;
+    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'company')]
+    private Collection $infoForms;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
-        $this->infoForm = new ArrayCollection();
+        $this->companyMembers = new ArrayCollection();
+        $this->infoForms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,26 +47,26 @@ class Company
         return $this->id;
     }
 
-    public function getCompanyName(): ?string
-    {
-        return $this->companyName;
-    }
-
-    public function setCompanyName(string $companyName): static
-    {
-        $this->companyName = $companyName;
-
-        return $this;
-    }
-
     public function getSiret(): ?string
     {
         return $this->siret;
     }
 
-    public function setSiret(string $siret): static
+    public function setSiret(?string $siret): static
     {
         $this->siret = $siret;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }
@@ -76,7 +76,7 @@ class Company
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phoneNumber): static
+    public function setPhoneNumber(?string $phoneNumber): static
     {
         $this->phoneNumber = $phoneNumber;
 
@@ -84,29 +84,29 @@ class Company
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, CompanyMember>
      */
-    public function getUsers(): Collection
+    public function getCompanyMembers(): Collection
     {
-        return $this->users;
+        return $this->companyMembers;
     }
 
-    public function addUser(User $user): static
+    public function addCompanyMember(CompanyMember $companyMember): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setCompany($this);
+        if (!$this->companyMembers->contains($companyMember)) {
+            $this->companyMembers->add($companyMember);
+            $companyMember->setCompany($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeCompanyMember(CompanyMember $companyMember): static
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->companyMembers->removeElement($companyMember)) {
             // set the owning side to null (unless already changed)
-            if ($user->getCompany() === $this) {
-                $user->setCompany(null);
+            if ($companyMember->getCompany() === $this) {
+                $companyMember->setCompany(null);
             }
         }
 
@@ -116,15 +116,16 @@ class Company
     /**
      * @return Collection<int, InfoForm>
      */
-    public function getInfoForm(): Collection
+    public function getInfoForms(): Collection
     {
-        return $this->infoForm;
+        return $this->infoForms;
     }
 
     public function addInfoForm(InfoForm $infoForm): static
     {
-        if (!$this->infoForm->contains($infoForm)) {
-            $this->infoForm->add($infoForm);
+        if (!$this->infoForms->contains($infoForm)) {
+            $this->infoForms->add($infoForm);
+            $infoForm->setCompany($this);
         }
 
         return $this;
@@ -132,7 +133,12 @@ class Company
 
     public function removeInfoForm(InfoForm $infoForm): static
     {
-        $this->infoForm->removeElement($infoForm);
+        if ($this->infoForms->removeElement($infoForm)) {
+            // set the owning side to null (unless already changed)
+            if ($infoForm->getCompany() === $this) {
+                $infoForm->setCompany(null);
+            }
+        }
 
         return $this;
     }

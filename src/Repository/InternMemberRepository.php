@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\InfoFormIntern;
+use App\Entity\InternMember;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<InfoFormIntern>
+ * @extends ServiceEntityRepository<InternMember>
  */
-class InfoFormInternRepository extends ServiceEntityRepository
+class InternMemberRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InfoFormIntern::class);
+        parent::__construct($registry, InternMember::class);
     }
 
     //    /**
-    //     * @return InfoFormIntern[] Returns an array of InfoFormIntern objects
+    //     * @return InternMember[] Returns an array of InternMember objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class InfoFormInternRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?InfoFormIntern
+    //    public function findOneBySomeField($value): ?InternMember
     //    {
     //        return $this->createQueryBuilder('i')
     //            ->andWhere('i.exampleField = :val')

@@ -14,7 +14,7 @@ class InfoFormInternCompany
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $name = null;
+    private ?string $companyName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
@@ -26,21 +26,21 @@ class InfoFormInternCompany
     private ?string $contactName = null;
 
     #[ORM\OneToOne(mappedBy: 'infoFormInternCompany', cascade: ['persist', 'remove'])]
-    private ?InfoFormIntern $infoFormIntern = null;
+    private ?InfoFormCompany $infoFormCompany = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getCompanyName(): ?string
     {
-        return $this->name;
+        return $this->companyName;
     }
 
-    public function setName(?string $name): static
+    public function setCompanyName(?string $name): static
     {
-        $this->name = $name;
+        $this->companyName = $name;
 
         return $this;
     }
@@ -81,24 +81,24 @@ class InfoFormInternCompany
         return $this;
     }
 
-    public function getInfoFormIntern(): ?InfoFormIntern
+    public function getInfoFormCompany(): ?InfoFormCompany
     {
-        return $this->infoFormIntern;
+        return $this->infoFormCompany;
     }
 
-    public function setInfoFormIntern(?InfoFormIntern $infoFormIntern): static
+    public function setInfoFormCompany(?InfoFormCompany $infoFormCompany): static
     {
         // unset the owning side of the relation if necessary
-        if ($infoFormIntern === null && $this->infoFormIntern !== null) {
-            $this->infoFormIntern->setInfoFormInternCompany(null);
+        if ($infoFormCompany === null && $this->infoFormCompany !== null) {
+            $this->infoFormCompany->setInfoFormInternCompany(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($infoFormIntern !== null && $infoFormIntern->getInfoFormInternCompany() !== $this) {
-            $infoFormIntern->setInfoFormInternCompany($this);
+        if ($infoFormCompany !== null && $infoFormCompany->getInfoFormInternCompany() !== $this) {
+            $infoFormCompany->setInfoFormInternCompany($this);
         }
 
-        $this->infoFormIntern = $infoFormIntern;
+        $this->infoFormCompany = $infoFormCompany;
 
         return $this;
     }

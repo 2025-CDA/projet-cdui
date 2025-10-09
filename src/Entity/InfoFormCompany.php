@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\EnumGender;
-use App\Enum\EnumWorkLocation;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
@@ -21,34 +19,31 @@ class InfoFormCompany
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $companyName = null;
+    private ?string $fax = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $activity = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $adress = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $phoneNumber = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $fax = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $siret = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $activityDescription = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stamp = null;
+
+    #[ORM\Column(nullable: true, enumType: Gender::class)]
+    private ?Gender $legalRepresentativeGender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $legalRepresentativeLastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $legalRepresentativeFirstName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $legalRepresentativeSignature = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $legalRepresentativeEmail = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $interviewStartDateTime = null;
@@ -59,14 +54,17 @@ class InfoFormCompany
     #[ORM\Column(nullable: true)]
     private ?bool $agreeTerms = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $legalRepresentativeSignature = null;
+    #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
+    private ?WorkLocation $workLocation = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tutorLastName = null;
+    #[ORM\Column(nullable: true, enumType: Gender::class)]
+    private ?Gender $tutorGender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tutorFirstName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tutorLastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tutorEmail = null;
@@ -74,27 +72,21 @@ class InfoFormCompany
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tutorPhoneNumber = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $activitiesCaption = null;
-
     #[ORM\OneToOne(mappedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
     private ?InfoForm $infoForm = null;
 
-    #[ORM\Column(nullable: true, enumType: EnumGender::class)]
-    private ?EnumGender $gender = null;
-
-    #[ORM\Column(nullable: true, enumType: EnumWorkLocation::class)]
-    private ?EnumWorkLocation $workLocation = null;
-
     /**
-     * @var Collection<int, CalendarFormDetail>
+     * @var Collection<int, InfoFormCompanyCalendarRow>
      */
-    #[ORM\OneToMany(targetEntity: CalendarFormDetail::class, mappedBy: 'infoFormCompany')]
-    private Collection $calendarFormDetails;
+    #[ORM\OneToMany(targetEntity: InfoFormCompanyCalendarRow::class, mappedBy: 'infoFormCompany')]
+    private Collection $infoFormCompanyCalendarRow;
+
+    #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
+    private ?InfoFormInternCompany $infoFormInternCompany = null;
 
     public function __construct()
     {
-        $this->calendarFormDetails = new ArrayCollection();
+        $this->infoFormCompanyCalendarRow = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,14 +94,14 @@ class InfoFormCompany
         return $this->id;
     }
 
-    public function getCompanyName(): ?string
+    public function getFax(): ?string
     {
-        return $this->companyName;
+        return $this->fax;
     }
 
-    public function setCompanyName(?string $companyName): static
+    public function setFax(?string $fax): static
     {
-        $this->companyName = $companyName;
+        $this->fax = $fax;
 
         return $this;
     }
@@ -126,62 +118,14 @@ class InfoFormCompany
         return $this;
     }
 
-    public function getAdress(): ?string
+    public function getActivityDescription(): ?string
     {
-        return $this->adress;
+        return $this->activityDescription;
     }
 
-    public function setAdress(?string $adress): static
+    public function setActivityDescription(?string $activityDescription): static
     {
-        $this->adress = $adress;
-
-        return $this;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(?string $phoneNumber): static
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
-    public function getFax(): ?string
-    {
-        return $this->fax;
-    }
-
-    public function setFax(?string $fax): static
-    {
-        $this->fax = $fax;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getSiret(): ?string
-    {
-        return $this->siret;
-    }
-
-    public function setSiret(?string $siret): static
-    {
-        $this->siret = $siret;
+        $this->activityDescription = $activityDescription;
 
         return $this;
     }
@@ -194,6 +138,18 @@ class InfoFormCompany
     public function setStamp(?string $stamp): static
     {
         $this->stamp = $stamp;
+
+        return $this;
+    }
+
+    public function getLegalRepresentativeGender(): ?Gender
+    {
+        return $this->legalRepresentativeGender;
+    }
+
+    public function setLegalRepresentativeGender(?Gender $legalRepresentativeGender): static
+    {
+        $this->legalRepresentativeGender = $legalRepresentativeGender;
 
         return $this;
     }
@@ -222,12 +178,36 @@ class InfoFormCompany
         return $this;
     }
 
+    public function getLegalRepresentativeSignature(): ?string
+    {
+        return $this->legalRepresentativeSignature;
+    }
+
+    public function setLegalRepresentativeSignature(?string $legalRepresentativeSignature): static
+    {
+        $this->legalRepresentativeSignature = $legalRepresentativeSignature;
+
+        return $this;
+    }
+
+    public function getLegalRepresentativeEmail(): ?string
+    {
+        return $this->legalRepresentativeEmail;
+    }
+
+    public function setLegalRepresentativeEmail(?string $legalRepresentativeEmail): static
+    {
+        $this->legalRepresentativeEmail = $legalRepresentativeEmail;
+
+        return $this;
+    }
+
     public function getInterviewStartDateTime(): ?\DateTimeImmutable
     {
         return $this->interviewStartDateTime;
     }
 
-    public function setInterviewStartDateTime(?\DateTimeImmutable $interviewStartDateTime): static
+    public function setInterviewStartDateTime(\DateTimeImmutable $interviewStartDateTime): static
     {
         $this->interviewStartDateTime = $interviewStartDateTime;
 
@@ -246,7 +226,6 @@ class InfoFormCompany
         return $this;
     }
 
-
     public function isAgreeTerms(): ?bool
     {
         return $this->agreeTerms;
@@ -259,26 +238,26 @@ class InfoFormCompany
         return $this;
     }
 
-    public function getLegalRepresentativeSignature(): ?string
+    public function getWorkLocation(): ?WorkLocation
     {
-        return $this->legalRepresentativeSignature;
+        return $this->workLocation;
     }
 
-    public function setLegalRepresentativeSignature(?string $legalRepresentativeSignature): static
+    public function setWorkLocation(?WorkLocation $workLocation): static
     {
-        $this->legalRepresentativeSignature = $legalRepresentativeSignature;
+        $this->workLocation = $workLocation;
 
         return $this;
     }
 
-    public function getTutorLastName(): ?string
+    public function getTutorGender(): ?Gender
     {
-        return $this->tutorLastName;
+        return $this->tutorGender;
     }
 
-    public function setTutorLastName(?string $tutorLastName): static
+    public function setTutorGender(?Gender $tutorGender): static
     {
-        $this->tutorLastName = $tutorLastName;
+        $this->tutorGender = $tutorGender;
 
         return $this;
     }
@@ -291,6 +270,18 @@ class InfoFormCompany
     public function setTutorFirstName(?string $tutorFirstName): static
     {
         $this->tutorFirstName = $tutorFirstName;
+
+        return $this;
+    }
+
+    public function getTutorLastName(): ?string
+    {
+        return $this->tutorLastName;
+    }
+
+    public function setTutorLastName(?string $tutorLastName): static
+    {
+        $this->tutorLastName = $tutorLastName;
 
         return $this;
     }
@@ -319,18 +310,6 @@ class InfoFormCompany
         return $this;
     }
 
-    public function getActivitiesCaption(): ?string
-    {
-        return $this->activitiesCaption;
-    }
-
-    public function setActivitiesCaption(?string $activitiesCaption): static
-    {
-        $this->activitiesCaption = $activitiesCaption;
-
-        return $this;
-    }
-
     public function getInfoForm(): ?InfoForm
     {
         return $this->infoForm;
@@ -353,56 +332,44 @@ class InfoFormCompany
         return $this;
     }
 
-    public function getGender(): ?EnumGender
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?EnumGender $gender): static
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getWorkLocation(): ?EnumWorkLocation
-    {
-        return $this->workLocation;
-    }
-
-    public function setWorkLocation(?EnumWorkLocation $workLocation): static
-    {
-        $this->workLocation = $workLocation;
-
-        return $this;
-    }
-
     /**
-     * @return Collection<int, CalendarFormDetail>
+     * @return Collection<int, InfoFormCompanyCalendarRow>
      */
-    public function getCalendarFormDetails(): Collection
+    public function getInfoFormCompanyCalendarRow(): Collection
     {
-        return $this->calendarFormDetails;
+        return $this->infoFormCompanyCalendarRow;
     }
 
-    public function addCalendarFormDetail(CalendarFormDetail $calendarFormDetail): static
+    public function addInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
     {
-        if (!$this->calendarFormDetails->contains($calendarFormDetail)) {
-            $this->calendarFormDetails->add($calendarFormDetail);
-            $calendarFormDetail->setInfoFormCompany($this);
+        if (!$this->infoFormCompanyCalendarRow->contains($infoFormCompanyCalendarRow)) {
+            $this->infoFormCompanyCalendarRow->add($infoFormCompanyCalendarRow);
+            $infoFormCompanyCalendarRow->setInfoFormCompany($this);
         }
 
         return $this;
     }
 
-    public function removeCalendarFormDetail(CalendarFormDetail $calendarFormDetail): static
+    public function removeInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
     {
-        if ($this->calendarFormDetails->removeElement($calendarFormDetail)) {
+        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow)) {
             // set the owning side to null (unless already changed)
-            if ($calendarFormDetail->getInfoFormCompany() === $this) {
-                $calendarFormDetail->setInfoFormCompany(null);
+            if ($infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
+                $infoFormCompanyCalendarRow->setInfoFormCompany(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getInfoFormInternCompany(): ?InfoFormInternCompany
+    {
+        return $this->infoFormInternCompany;
+    }
+
+    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
+    {
+        $this->infoFormInternCompany = $infoFormInternCompany;
 
         return $this;
     }

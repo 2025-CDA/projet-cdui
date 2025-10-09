@@ -4,13 +4,11 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -33,26 +31,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $idLogin = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $firstName = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Organization $organization = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $login = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Intern $intern = null;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Company $company = null;
+    private ?CompanyMember $companyMember = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Trainer $trainer = null;
+    private ?OrganizationMember $organizationMember = null;
+
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?InternMember $internMember = null;
 
     public function getId(): ?int
     {
@@ -124,8 +119,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
-        
+        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+
         return $data;
     }
 
@@ -135,14 +130,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // @deprecated, to be removed when upgrading to Symfony 8
     }
 
-    public function getIdLogin(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->idLogin;
+        return $this->firstName;
     }
 
-    public function setIdLogin(string $idLogin): static
+    public function setFirstName(?string $firstName): static
     {
-        $this->idLogin = $idLogin;
+        $this->firstName = $firstName;
 
         return $this;
     }
@@ -152,69 +147,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
+    public function setLastName(?string $lastName): static
     {
         $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getLogin(): ?string
     {
-        return $this->firstName;
+        return $this->login;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setLogin(?string $login): static
     {
-        $this->firstName = $firstName;
+        $this->login = $login;
 
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getCompanyMember(): ?CompanyMember
     {
-        return $this->organization;
+        return $this->companyMember;
     }
 
-    public function setOrganization(?Organization $organization): static
+    public function setCompanyMember(?CompanyMember $companyMember): static
     {
-        $this->organization = $organization;
+        $this->companyMember = $companyMember;
 
         return $this;
     }
 
-    public function getIntern(): ?Intern
+    public function getOrganizationMember(): ?OrganizationMember
     {
-        return $this->intern;
+        return $this->organizationMember;
     }
 
-    public function setIntern(?Intern $intern): static
+    public function setOrganizationMember(?OrganizationMember $organizationMember): static
     {
-        $this->intern = $intern;
+        $this->organizationMember = $organizationMember;
 
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getInternMember(): ?InternMember
     {
-        return $this->company;
+        return $this->internMember;
     }
 
-    public function setCompany(?Company $company): static
+    public function setInternMember(?InternMember $internMember): static
     {
-        $this->company = $company;
-
-        return $this;
-    }
-
-    public function getTrainer(): ?Trainer
-    {
-        return $this->trainer;
-    }
-
-    public function setTrainer(?Trainer $trainer): static
-    {
-        $this->trainer = $trainer;
+        $this->internMember = $internMember;
 
         return $this;
     }
