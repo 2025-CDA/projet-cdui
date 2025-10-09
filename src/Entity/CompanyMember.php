@@ -25,17 +25,6 @@ class CompanyMember
     #[ORM\ManyToOne(inversedBy: 'companyMembers')]
     private ?Company $company = null;
 
-    /**
-     * @var Collection<int, InfoForm>
-     */
-    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'companyMember')]
-    private Collection $infoForm;
-
-    public function __construct()
-    {
-        $this->infoForm = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -83,36 +72,6 @@ class CompanyMember
     public function setCompany(?Company $company): static
     {
         $this->company = $company;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, InfoForm>
-     */
-    public function getInfoForm(): Collection
-    {
-        return $this->infoForm;
-    }
-
-    public function addInfoForm(InfoForm $infoForm): static
-    {
-        if (!$this->infoForm->contains($infoForm)) {
-            $this->infoForm->add($infoForm);
-            $infoForm->setCompanyMember($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInfoForm(InfoForm $infoForm): static
-    {
-        if ($this->infoForm->removeElement($infoForm)) {
-            // set the owning side to null (unless already changed)
-            if ($infoForm->getCompanyMember() === $this) {
-                $infoForm->setCompanyMember(null);
-            }
-        }
 
         return $this;
     }

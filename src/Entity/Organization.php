@@ -27,9 +27,16 @@ class Organization
     #[ORM\OneToMany(targetEntity: OrganizationMember::class, mappedBy: 'organization')]
     private Collection $organizationMembers;
 
+    /**
+     * @var Collection<int, InfoForm>
+     */
+    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'organization')]
+    private Collection $infoForms;
+
     public function __construct()
     {
         $this->organizationMembers = new ArrayCollection();
+        $this->infoForms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,6 +92,36 @@ class Organization
             // set the owning side to null (unless already changed)
             if ($organizationMember->getOrganization() === $this) {
                 $organizationMember->setOrganization(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InfoForm>
+     */
+    public function getInfoForms(): Collection
+    {
+        return $this->infoForms;
+    }
+
+    public function addInfoForm(InfoForm $infoForm): static
+    {
+        if (!$this->infoForms->contains($infoForm)) {
+            $this->infoForms->add($infoForm);
+            $infoForm->setOrganization($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfoForm(InfoForm $infoForm): static
+    {
+        if ($this->infoForms->removeElement($infoForm)) {
+            // set the owning side to null (unless already changed)
+            if ($infoForm->getOrganization() === $this) {
+                $infoForm->setOrganization(null);
             }
         }
 

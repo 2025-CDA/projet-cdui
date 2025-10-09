@@ -30,9 +30,16 @@ class Company
     #[ORM\OneToMany(targetEntity: CompanyMember::class, mappedBy: 'company')]
     private Collection $companyMembers;
 
+    /**
+     * @var Collection<int, InfoForm>
+     */
+    #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'company')]
+    private Collection $infoForms;
+
     public function __construct()
     {
         $this->companyMembers = new ArrayCollection();
+        $this->infoForms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,6 +107,36 @@ class Company
             // set the owning side to null (unless already changed)
             if ($companyMember->getCompany() === $this) {
                 $companyMember->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InfoForm>
+     */
+    public function getInfoForms(): Collection
+    {
+        return $this->infoForms;
+    }
+
+    public function addInfoForm(InfoForm $infoForm): static
+    {
+        if (!$this->infoForms->contains($infoForm)) {
+            $this->infoForms->add($infoForm);
+            $infoForm->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfoForm(InfoForm $infoForm): static
+    {
+        if ($this->infoForms->removeElement($infoForm)) {
+            // set the owning side to null (unless already changed)
+            if ($infoForm->getCompany() === $this) {
+                $infoForm->setCompany(null);
             }
         }
 

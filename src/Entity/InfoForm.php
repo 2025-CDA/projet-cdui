@@ -20,9 +20,6 @@ class InfoForm
     #[ORM\ManyToOne(inversedBy: 'infoForm')]
     private ?InternMember $internMember = null;
 
-    #[ORM\ManyToOne(inversedBy: 'infoForm')]
-    private ?CompanyMember $companyMember = null;
-
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
     private ?InfoFormIntern $infoFormIntern = null;
 
@@ -31,6 +28,12 @@ class InfoForm
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
     private ?InfoFormCompany $infoFormCompany = null;
+
+    #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    private ?Company $company = null;
+
+    #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    private ?Organization $organization = null;
 
     public function getId(): ?int
     {
@@ -57,18 +60,6 @@ class InfoForm
     public function setInternMember(?InternMember $internMember): static
     {
         $this->internMember = $internMember;
-
-        return $this;
-    }
-
-    public function getCompanyMember(): ?CompanyMember
-    {
-        return $this->companyMember;
-    }
-
-    public function setCompanyMember(?CompanyMember $companyMember): static
-    {
-        $this->companyMember = $companyMember;
 
         return $this;
     }
@@ -105,6 +96,30 @@ class InfoForm
     public function setInfoFormCompany(?InfoFormCompany $infoFormCompany): static
     {
         $this->infoFormCompany = $infoFormCompany;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): static
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(?Organization $organization): static
+    {
+        $this->organization = $organization;
 
         return $this;
     }
