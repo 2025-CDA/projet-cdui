@@ -163,5 +163,6 @@ or one line:
 #### Branch naming convention
 Name-Feature
 <br>
-Example: Amine-Feature
+Example: Front-Amine-Feature
+         Back-Karim-Feature
 ```
