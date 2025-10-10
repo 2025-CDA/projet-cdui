@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Intern;
+use App\Entity\InfoFormCompanyCalendarRow;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Intern>
+ * @extends ServiceEntityRepository<InfoFormCompanyCalendarRow>
  */
-class InternRepository extends ServiceEntityRepository
+class InfoFormCompanyCalendarRowRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Intern::class);
+        parent::__construct($registry, InfoFormCompanyCalendarRow::class);
     }
 
 //    /**
-//     * @return Intern[] Returns an array of Intern objects
+//     * @return InfoFormCompanyCalendarRow[] Returns an array of InfoFormCompanyCalendarRow objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class InternRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Intern
+//    public function findOneBySomeField($value): ?InfoFormCompanyCalendarRow
 //    {
 //        return $this->createQueryBuilder('i')
 //            ->andWhere('i.exampleField = :val')
