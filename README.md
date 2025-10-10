@@ -6,6 +6,7 @@ Here is the updated `README.md` file.
 
 # Project Setup and Usage
 
+
 This document provides instructions on how to install the project's dependencies and run it in a development environment.
 
 ## 💻 Installation
