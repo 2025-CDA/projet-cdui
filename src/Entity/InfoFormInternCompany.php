@@ -32,6 +32,9 @@ class InfoFormInternCompany
     #[ORM\OneToOne(mappedBy: 'infoFormInternCompany', cascade: ['persist', 'remove'])]
     private ?InfoFormCompany $infoFormCompany = null;
 
+
+
+
     public function getId(): ?int
     {
         return $this->id;

@@ -2,20 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\InfoFormInternRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => 'info_form_intern:read']),
+        new GetCollection(normalizationContext: ['groups' => 'info_form_intern:read'])
+    ]
+)]
 
 class InfoFormIntern
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['info_form_intern:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
@@ -26,6 +35,27 @@ class InfoFormIntern
 
     #[ORM\OneToOne(mappedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
     private ?InfoForm $infoForm = null;
+
+
+    #[Groups(['info_form_intern:read'])] // <-- This is the key!
+    public function getFirstName(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
+    }
+
+    #[Groups(['info_form_intern:read'])] // <-- Expose this too.
+    public function getLastName(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getUser()?->getLastName();
+    }
+
+//    #[Groups(['info_form_intern:read'])] // <-- Expose this too.
+//    public function getFullName(): ?string
+//    {
+//        $firstname = $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
+//        $lastname = $this->infoForm?->getInternMember()?->getUser()?->getLastName();
+//        return $firstname && $lastname ? "$firstname $lastname" : null;
+//    }
 
     public function getId(): ?int
     {
