@@ -85,6 +85,14 @@ class InfoFormCompany
     #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
     private ?InfoFormInternCompany $infoFormInternCompany = null;
 
+
+// TODO:
+// - companyName
+// - address
+// - email
+// - contactName
+//
+
     public function __construct()
     {
         $this->infoFormCompanyCalendarRow = new ArrayCollection();
