@@ -5,8 +5,12 @@ namespace App\Entity;
 use App\Repository\InfoFormInternRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
+#[ApiResource]
+
 class InfoFormIntern
 {
     #[ORM\Id]

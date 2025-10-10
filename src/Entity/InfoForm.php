@@ -5,8 +5,11 @@ namespace App\Entity;
 use App\Enum\InfoFormStatus;
 use App\Repository\InfoFormRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: InfoFormRepository::class)]
+#[ApiResource]
+
 class InfoForm
 {
     #[ORM\Id]

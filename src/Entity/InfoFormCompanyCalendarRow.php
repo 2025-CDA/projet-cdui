@@ -7,8 +7,11 @@ use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyCalendarRowRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: InfoFormCompanyCalendarRowRepository::class)]
+#[ApiResource]
+
 class InfoFormCompanyCalendarRow
 {
     #[ORM\Id]
