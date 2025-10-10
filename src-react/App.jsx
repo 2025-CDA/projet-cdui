@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Button from "./ui/Button";
+
 
 export default function App() {
     const [data, setData] = useState([]);
@@ -35,6 +37,8 @@ export default function App() {
                     <li key={item.id}>{item.name}</li>
                 ))}
             </ul>
+
+        <Button/>
             
         </div>
     );
