@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiResource;
+use App\Enum\Gender;
 use App\Repository\InfoFormInternRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,6 +37,9 @@ class InfoFormIntern
     #[ORM\OneToOne(mappedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
     private ?InfoForm $infoForm = null;
 
+    #[ORM\Column(nullable: true, enumType: Gender::class)]
+    private ?Gender $gender = null;
+
 
     #[Groups(['info_form_intern:read'])] // <-- This is the key!
     public function getFirstName(): ?string
@@ -56,7 +60,10 @@ class InfoFormIntern
 //        $lastname = $this->infoForm?->getInternMember()?->getUser()?->getLastName();
 //        return $firstname && $lastname ? "$firstname $lastname" : null;
 //    }
-
+//
+// TODO:
+// - email
+// - offerNumber
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +111,18 @@ class InfoFormIntern
         }
 
         $this->infoForm = $infoForm;
+
+        return $this;
+    }
+
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?Gender $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }
