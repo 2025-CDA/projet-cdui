@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
+import Tessst from "./ui/Tessst";
 
 
 export default function App() {
@@ -38,7 +39,9 @@ export default function App() {
                 ))}
             </ul>
 
-        <Button/>
+        <Button color={"blue"} varity={"solide"}>click me </Button>
+        <Button color={"blue"} varity={"outline"}>click me </Button>
+        
             
         </div>
     );
