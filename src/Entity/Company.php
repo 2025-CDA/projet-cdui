@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ApiResource]
+
 class Company
 {
     #[ORM\Id]
