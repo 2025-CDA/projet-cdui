@@ -36,6 +36,12 @@ class Organization
     #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'organization')]
     private Collection $infoForms;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $uupdatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->organizationMembers = new ArrayCollection();
@@ -127,6 +133,30 @@ class Organization
                 $infoForm->setOrganization(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUupdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->uupdatedAt;
+    }
+
+    public function setUupdatedAt(?\DateTimeImmutable $uupdatedAt): static
+    {
+        $this->uupdatedAt = $uupdatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

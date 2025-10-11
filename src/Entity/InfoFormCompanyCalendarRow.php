@@ -40,6 +40,12 @@ class InfoFormCompanyCalendarRow
     #[ORM\ManyToOne(inversedBy: 'infoFormCompanyCalendarRow')]
     private ?InfoFormCompany $infoFormCompany = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,6 +131,30 @@ class InfoFormCompanyCalendarRow
     public function setInfoFormCompany(?InfoFormCompany $infoFormCompany): static
     {
         $this->infoFormCompany = $infoFormCompany;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

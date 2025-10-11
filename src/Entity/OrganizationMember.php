@@ -34,6 +34,12 @@ class OrganizationMember
     #[ORM\ManyToMany(targetEntity: TrainingSession::class, inversedBy: 'organizationMembers')]
     private Collection $trainingSession;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->trainingSession = new ArrayCollection();
@@ -110,6 +116,30 @@ class OrganizationMember
     public function removeTrainingSession(TrainingSession $trainingSession): static
     {
         $this->trainingSession->removeElement($trainingSession);
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

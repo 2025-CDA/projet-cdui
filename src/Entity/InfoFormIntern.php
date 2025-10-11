@@ -61,6 +61,12 @@ class InfoFormIntern
     #[ORM\OneToOne(inversedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
     private ?InfoFormInternCompany $infoFormInternCompany = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     #[Groups(['read:item'])]
     public function getFirstName(): ?string
     {
@@ -189,6 +195,30 @@ class InfoFormIntern
     public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
     {
         $this->infoFormInternCompany = $infoFormInternCompany;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
