@@ -108,17 +108,25 @@ class InfoFormCompany
     private ?\DateTimeImmutable $createdAt = null;
 
 
-    public function getFirstName(): ?string
+    public function getName(): ?string
     {
-        return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getCompanyName();
     }
 
-// TODO:
-// - companyName
-// - address
-// - email
-// - contactName
-//
+    public function getAddress(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getAddress();
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getEmail();
+    }
+
+    public function getContactName(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getContactName();
+    }
 
     public function __construct()
     {

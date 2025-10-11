@@ -75,6 +75,7 @@ class InfoFormIntern
     private ?Gender $gender = null;
 
     #[ORM\OneToOne(inversedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
+    #[Groups(['read:item'])]
     private ?InfoFormInternCompany $infoFormInternCompany = null;
 
     #[ORM\Column(nullable: true)]
