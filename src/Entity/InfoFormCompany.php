@@ -10,12 +10,29 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormCompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class InfoFormCompany
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -89,6 +106,12 @@ class InfoFormCompany
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
+
+
+    public function getFirstName(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
+    }
 
 // TODO:
 // - companyName

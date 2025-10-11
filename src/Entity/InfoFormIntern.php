@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
 //    order: ['createdAt' => 'DESC']
 )]
@@ -36,6 +37,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[Delete]
 class InfoFormIntern
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -62,9 +78,11 @@ class InfoFormIntern
     private ?InfoFormInternCompany $infoFormInternCompany = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:item'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:item'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[Groups(['read:item'])]

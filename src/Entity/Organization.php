@@ -10,9 +10,25 @@ use ApiPlatform\Metadata\ApiResource;
 
 
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class Organization
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,7 +53,7 @@ class Organization
     private Collection $infoForms;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $uupdatedAt = null;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
@@ -137,14 +153,14 @@ class Organization
         return $this;
     }
 
-    public function getUupdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->uupdatedAt;
+        return $this->updatedAt;
     }
 
-    public function setUupdatedAt(?\DateTimeImmutable $uupdatedAt): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
-        $this->uupdatedAt = $uupdatedAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

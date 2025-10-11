@@ -11,9 +11,25 @@ use ApiPlatform\Metadata\ApiResource;
 
 
 #[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
 class CompanyMember
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
