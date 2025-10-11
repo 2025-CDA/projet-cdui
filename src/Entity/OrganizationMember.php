@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\OrganizationRole;
 use App\Repository\OrganizationMemberRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:organization_member_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:organization_member']])]
 #[Patch(denormalizationContext: ['groups' => ['update:organization_member']])]
+#[Put(denormalizationContext: ['groups' => ['update:organization_member']])]
 #[Delete]
 class OrganizationMember
 {

@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\WeekDay;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyCalendarRowRepository;
@@ -23,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_company_calendar_row_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form_company_calendar_row']])]
 #[Patch(denormalizationContext: ['groups' => ['update:info_form_company_calendar_row']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_company_calendar_row']])]
 #[Delete]
 class InfoFormCompanyCalendarRow
 {

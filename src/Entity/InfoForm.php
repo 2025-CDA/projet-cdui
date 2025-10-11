@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\InfoFormStatus;
 use App\Repository\InfoFormRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form']])]
 #[Patch(denormalizationContext: ['groups' => ['update:info_form']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form']])]
 #[Delete]
 class InfoForm
 {

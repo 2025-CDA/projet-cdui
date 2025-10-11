@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\TrainingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[GetCollection(normalizationContext: ['groups' => ['read:training_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:training']])]
 #[Patch(denormalizationContext: ['groups' => ['update:training']])]
+#[Put(denormalizationContext: ['groups' => ['update:training']])]
 #[Delete]
 class Training
 {

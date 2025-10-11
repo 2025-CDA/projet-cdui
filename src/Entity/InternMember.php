@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\InternMemberRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[GetCollection(normalizationContext: ['groups' => ['read:intern_member_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:intern_member']])]
 #[Patch(denormalizationContext: ['groups' => ['update:intern_member']])]
+#[Put(denormalizationContext: ['groups' => ['update:intern_member']])]
 #[Delete]
 class InternMember
 {

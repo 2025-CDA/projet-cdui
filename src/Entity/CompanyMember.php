@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\CompanyRole;
 use App\Repository\CompanyMemberRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[GetCollection(normalizationContext: ['groups' => ['read:company_member_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:company_member']])]
 #[Patch(denormalizationContext: ['groups' => ['update:company_member']])]
+#[Put(denormalizationContext: ['groups' => ['update:company_member']])]
 #[Delete]
 class CompanyMember
 {

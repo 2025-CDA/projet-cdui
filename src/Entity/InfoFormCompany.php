@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
@@ -25,6 +26,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_company_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form_company']])]
 #[Patch(denormalizationContext: ['groups' => ['update:info_form_company']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_company']])]
 #[Delete]
 class InfoFormCompany
 {

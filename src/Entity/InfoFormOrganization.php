@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\InfoFormOrganizationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_organization_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form_organization']])]
 #[Patch(denormalizationContext: ['groups' => ['update:info_form_organization']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_organization']])]
 #[Delete]
 class InfoFormOrganization
 {

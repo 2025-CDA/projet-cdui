@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\Gender;
 use App\Enum\OrganizationRole;
 use App\Repository\InfoFormInternRepository;
@@ -24,6 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_intern_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form_intern']])]
 #[Patch(denormalizationContext: ['groups' => ['update:info_form_intern']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_intern']])]
 #[Delete]
 class InfoFormIntern
 {

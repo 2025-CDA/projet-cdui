@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -24,11 +25,13 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ApiResource(order: ['id' => 'ASC'])]
 #[Get(normalizationContext: ['groups' => ['read:user']])]
 #[GetCollection(
+    paginationItemsPerPage: 2,
     normalizationContext: ['groups' => ['read:user_collection']],
 //    forceEager: false,
 )]
 #[Post(denormalizationContext: ['groups' => ['create:user']])]
 #[Patch(denormalizationContext: ['groups' => ['update:user']])]
+#[Put(normalizationContext: ['groups' => ['update:user']])]
 #[Delete]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
