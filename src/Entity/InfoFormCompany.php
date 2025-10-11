@@ -84,10 +84,6 @@ class InfoFormCompany
     #[ORM\OneToMany(targetEntity: InfoFormCompanyCalendarRow::class, mappedBy: 'infoFormCompany')]
     private Collection $infoFormCompanyCalendarRow;
 
-    #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
-    private ?InfoFormInternCompany $infoFormInternCompany = null;
-
-
 // TODO:
 // - companyName
 // - address
@@ -363,24 +359,10 @@ class InfoFormCompany
 
     public function removeInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
     {
-        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow)) {
-            // set the owning side to null (unless already changed)
-            if ($infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
-                $infoFormCompanyCalendarRow->setInfoFormCompany(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow) && $infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
+            $infoFormCompanyCalendarRow->setInfoFormCompany(null);
         }
-
-        return $this;
-    }
-
-    public function getInfoFormInternCompany(): ?InfoFormInternCompany
-    {
-        return $this->infoFormInternCompany;
-    }
-
-    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
-    {
-        $this->infoFormInternCompany = $infoFormInternCompany;
 
         return $this;
     }

@@ -9,7 +9,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\Gender;
+use App\Enum\OrganizationRole;
 use App\Repository\InfoFormInternRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -17,47 +19,61 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => 'info_form_intern:read'],
+//    order: ['createdAt' => 'DESC']
 )]
-#[GetCollection]
-#[Post]
-#[Get]
+#[Get(
+    normalizationContext: ['groups' => ['read:item']]
+)]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read:collection']]
+)]
+#[Post(
+    denormalizationContext: ['groups' => ['create:item']]
+)]
+#[Patch(
+    denormalizationContext: ['groups' => ['update:item']]
+)]
 #[Delete]
-#[Patch]
 class InfoFormIntern
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item', 'read:collection'])]
     private ?int $id = null;
 
+    #[Groups(['read:item', 'read:collection'])]
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateStart = null;
 
+    #[Groups(['read:item', 'read:collection'])]
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateEnd = null;
 
+    #[Groups(['read:item'])]
     #[ORM\OneToOne(mappedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
     private ?InfoForm $infoForm = null;
 
     #[ORM\Column(nullable: true, enumType: Gender::class)]
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item', 'read:collection'])]
     private ?Gender $gender = null;
 
-    #[Groups(['info_form_intern:read'])]
+    #[ORM\OneToOne(inversedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
+    private ?InfoFormInternCompany $infoFormInternCompany = null;
+
+    #[Groups(['read:item'])]
     public function getFirstName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
     }
 
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item'])]
     public function getLastName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getLastName();
     }
 
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item', 'read:collection'])]
     public function getFullName(): ?string
     {
         $firstname = $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
@@ -65,28 +81,41 @@ class InfoFormIntern
         return $firstname && $lastname ? "$firstname $lastname" : null;
     }
 
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item', 'read:collection'])]
     public function getEmail(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getEmail();
     }
 
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item'])]
     public function getOfferNumber(): ?string
     {
         return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getOfferNumber();
     }
 
-    #[Groups(['info_form_intern:read'])]
+    #[Groups(['read:item'])]
     public function getTrainingSessionName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getTraining()?->getName();
     }
 
-    #[Groups(['info_form_intern:read'])]
-    public function getTrainingSessionTrainer(): ?string
+    #[Groups(['read:item'])]
+    public function getTrainers(): ?array
     {
-        return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getOrganizationMembers()->first()?->getUser()?->getFullName();
+        $organizationMembers = $this->infoForm?->getInternMember()?->getTrainingSession()?->first()?->getOrganizationMembers();
+
+        if (!$organizationMembers instanceof Collection) {
+            return [];
+        }
+
+        $trainerNames = [];
+        foreach ($organizationMembers as $member) {
+            if ($member->getRole() === OrganizationRole::TRAINER) {
+                $trainerNames[] = $member->getUser()?->getFullName();
+            }
+        }
+
+        return $trainerNames;
     }
 
     public function getId(): ?int
@@ -148,6 +177,18 @@ class InfoFormIntern
     public function setGender(?Gender $gender): static
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getInfoFormInternCompany(): ?InfoFormInternCompany
+    {
+        return $this->infoFormInternCompany;
+    }
+
+    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
+    {
+        $this->infoFormInternCompany = $infoFormInternCompany;
 
         return $this;
     }
