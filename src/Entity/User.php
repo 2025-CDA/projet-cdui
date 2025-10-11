@@ -12,11 +12,26 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource]
+#[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,6 +58,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
+
+    public function getFullName(): ?string
+    {
+        return $this->lastName . ' ' . $this->firstName;
+    }
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $login = null;
 
@@ -54,6 +75,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
     private ?InternMember $internMember = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -204,6 +231,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setInternMember(?InternMember $internMember): static
     {
         $this->internMember = $internMember;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

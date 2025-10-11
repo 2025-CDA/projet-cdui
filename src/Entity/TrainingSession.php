@@ -11,10 +11,25 @@ use ApiPlatform\Metadata\ApiResource;
 
 
 #[ORM\Entity(repositoryClass: TrainingSessionRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource]
-
 class TrainingSession
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,9 +37,6 @@ class TrainingSession
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $offerNumber = null;
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $internShipPeriodStart = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $internshipPeriodStart = null;
@@ -53,6 +65,12 @@ class TrainingSession
     #[ORM\ManyToMany(targetEntity: InternMember::class, mappedBy: 'trainingSession')]
     private Collection $internMembers;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->organizationMembers = new ArrayCollection();
@@ -78,12 +96,12 @@ class TrainingSession
 
     public function getInternShipPeriodStart(): ?\DateTimeImmutable
     {
-        return $this->internShipPeriodStart;
+        return $this->internshipPeriodStart;
     }
 
     public function setInternShipPeriodStart(?\DateTimeImmutable $internShipPeriodStart): static
     {
-        $this->internShipPeriodStart = $internShipPeriodStart;
+        $this->internshipPeriodStart = $internShipPeriodStart;
 
         return $this;
     }
@@ -186,6 +204,30 @@ class TrainingSession
         if ($this->internMembers->removeElement($internMember)) {
             $internMember->removeTrainingSession($this);
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

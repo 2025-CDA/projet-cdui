@@ -10,10 +10,29 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: InfoFormCompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class InfoFormCompany
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -82,16 +101,32 @@ class InfoFormCompany
     #[ORM\OneToMany(targetEntity: InfoFormCompanyCalendarRow::class, mappedBy: 'infoFormCompany')]
     private Collection $infoFormCompanyCalendarRow;
 
-    #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
-    private ?InfoFormInternCompany $infoFormInternCompany = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
 
-// TODO:
-// - companyName
-// - address
-// - email
-// - contactName
-//
+    public function getName(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getCompanyName();
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getAddress();
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getEmail();
+    }
+
+    public function getContactName(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getContactName();
+    }
 
     public function __construct()
     {
@@ -361,24 +396,34 @@ class InfoFormCompany
 
     public function removeInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
     {
-        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow)) {
-            // set the owning side to null (unless already changed)
-            if ($infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
-                $infoFormCompanyCalendarRow->setInfoFormCompany(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow) && $infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
+            $infoFormCompanyCalendarRow->setInfoFormCompany(null);
         }
 
         return $this;
     }
 
-    public function getInfoFormInternCompany(): ?InfoFormInternCompany
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->infoFormInternCompany;
+        return $this->updatedAt;
     }
 
-    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
-        $this->infoFormInternCompany = $infoFormInternCompany;
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

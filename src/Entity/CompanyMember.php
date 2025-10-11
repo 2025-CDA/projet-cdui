@@ -9,11 +9,27 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 
-#[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
-#[ApiResource]
 
+#[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class CompanyMember
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -27,6 +43,12 @@ class CompanyMember
 
     #[ORM\ManyToOne(inversedBy: 'companyMembers')]
     private ?Company $company = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -75,6 +97,30 @@ class CompanyMember
     public function setCompany(?Company $company): static
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
