@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: OrganizationMemberRepository::class)]
 #[ApiResource]
-
 class OrganizationMember
 {
     #[ORM\Id]

@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: TrainingSessionRepository::class)]
 #[ApiResource]
-
 class TrainingSession
 {
     #[ORM\Id]
@@ -22,9 +21,6 @@ class TrainingSession
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $offerNumber = null;
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $internShipPeriodStart = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $internshipPeriodStart = null;
@@ -78,12 +74,12 @@ class TrainingSession
 
     public function getInternShipPeriodStart(): ?\DateTimeImmutable
     {
-        return $this->internShipPeriodStart;
+        return $this->internshipPeriodStart;
     }
 
     public function setInternShipPeriodStart(?\DateTimeImmutable $internShipPeriodStart): static
     {
-        $this->internShipPeriodStart = $internShipPeriodStart;
+        $this->internshipPeriodStart = $internShipPeriodStart;
 
         return $this;
     }

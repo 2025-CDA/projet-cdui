@@ -11,7 +11,6 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: InternMemberRepository::class)]
 #[ApiResource]
-
 class InternMember
 {
     #[ORM\Id]

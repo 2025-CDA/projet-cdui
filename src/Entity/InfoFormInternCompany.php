@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: InfoFormInternCompanyRepository::class)]
 #[ApiResource]
-
 class InfoFormInternCompany
 {
     #[ORM\Id]

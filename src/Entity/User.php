@@ -12,9 +12,8 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -42,6 +41,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
+
+
+    public function getFullName(): ?string
+    {
+        return $this->lastName . ' ' . $this->firstName;
+    }
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $login = null;

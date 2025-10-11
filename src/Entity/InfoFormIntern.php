@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Enum\Gender;
 use App\Repository\InfoFormInternRepository;
 use Doctrine\DBAL\Types\Types;
@@ -14,12 +17,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
 #[ApiResource(
-    operations: [
-        new Get(normalizationContext: ['groups' => 'info_form_intern:read']),
-        new GetCollection(normalizationContext: ['groups' => 'info_form_intern:read'])
-    ]
+    normalizationContext: ['groups' => 'info_form_intern:read'],
 )]
-
+#[GetCollection]
+#[Post]
+#[Get]
+#[Delete]
+#[Patch]
 class InfoFormIntern
 {
     #[ORM\Id]
@@ -38,32 +42,53 @@ class InfoFormIntern
     private ?InfoForm $infoForm = null;
 
     #[ORM\Column(nullable: true, enumType: Gender::class)]
+    #[Groups(['info_form_intern:read'])]
     private ?Gender $gender = null;
 
-
-    #[Groups(['info_form_intern:read'])] // <-- This is the key!
+    #[Groups(['info_form_intern:read'])]
     public function getFirstName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
     }
 
-    #[Groups(['info_form_intern:read'])] // <-- Expose this too.
+    #[Groups(['info_form_intern:read'])]
     public function getLastName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getLastName();
     }
 
-//    #[Groups(['info_form_intern:read'])] // <-- Expose this too.
-//    public function getFullName(): ?string
-//    {
-//        $firstname = $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
-//        $lastname = $this->infoForm?->getInternMember()?->getUser()?->getLastName();
-//        return $firstname && $lastname ? "$firstname $lastname" : null;
-//    }
-//
-// TODO:
-// - email
-// - offerNumber
+    #[Groups(['info_form_intern:read'])]
+    public function getFullName(): ?string
+    {
+        $firstname = $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
+        $lastname = $this->infoForm?->getInternMember()?->getUser()?->getLastName();
+        return $firstname && $lastname ? "$firstname $lastname" : null;
+    }
+
+    #[Groups(['info_form_intern:read'])]
+    public function getEmail(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getUser()?->getEmail();
+    }
+
+    #[Groups(['info_form_intern:read'])]
+    public function getOfferNumber(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getOfferNumber();
+    }
+
+    #[Groups(['info_form_intern:read'])]
+    public function getTrainingSessionName(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getTraining()?->getName();
+    }
+
+    #[Groups(['info_form_intern:read'])]
+    public function getTrainingSessionTrainer(): ?string
+    {
+        return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getOrganizationMembers()->first()?->getUser()?->getFullName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
