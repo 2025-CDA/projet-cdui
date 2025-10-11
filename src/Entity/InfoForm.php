@@ -2,15 +2,26 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Enum\InfoFormStatus;
 use App\Repository\InfoFormRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form']])]
+#[Delete]
 class InfoForm
 {
     #[ORM\PrePersist]
@@ -31,33 +42,87 @@ class InfoForm
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: InfoFormStatus::class)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormStatus $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForm')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InternMember $internMember = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormIntern $infoFormIntern = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
-    private ?InfoFormOrganization $inforFormOrganization = null;
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
+    private ?InfoFormOrganization $infoFormOrganization = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormCompany $infoFormCompany = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?Company $company = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?Organization $organization = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
@@ -101,14 +166,14 @@ class InfoForm
         return $this;
     }
 
-    public function getInforFormOrganization(): ?InfoFormOrganization
+    public function getInfoFormOrganization(): ?InfoFormOrganization
     {
-        return $this->inforFormOrganization;
+        return $this->infoFormOrganization;
     }
 
-    public function setInforFormOrganization(?InfoFormOrganization $inforFormOrganization): static
+    public function setInfoFormOrganization(?InfoFormOrganization $infoFormOrganization): static
     {
-        $this->inforFormOrganization = $inforFormOrganization;
+        $this->infoFormOrganization = $infoFormOrganization;
 
         return $this;
     }

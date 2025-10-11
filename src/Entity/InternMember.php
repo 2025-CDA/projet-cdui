@@ -2,16 +2,28 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\InternMemberRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: InternMemberRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:intern_member']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:intern_member_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:intern_member']])]
+#[Patch(denormalizationContext: ['groups' => ['update:intern_member']])]
+#[Delete]
 class InternMember
 {
     #[ORM\PrePersist]
@@ -32,27 +44,63 @@ class InternMember
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\OneToOne(mappedBy: 'internMember', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection',
+        'create:intern_member',
+        'update:intern_member'
+    ])]
     private ?User $user = null;
 
     /**
      * @var Collection<int, TrainingSession>
      */
     #[ORM\ManyToMany(targetEntity: TrainingSession::class, inversedBy: 'internMembers')]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection',
+        'create:intern_member',
+        'update:intern_member'
+    ])]
     private Collection $trainingSession;
 
     /**
      * @var Collection<int, InfoForm>
      */
     #[ORM\OneToMany(targetEntity: InfoForm::class, mappedBy: 'internMember')]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection',
+        'create:intern_member',
+        'update:intern_member'
+    ])]
     private Collection $infoForm;
 
     #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:intern_member',
+        'read:intern_member_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct()

@@ -19,21 +19,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(
-//    order: ['createdAt' => 'DESC']
-)]
-#[Get(
-    normalizationContext: ['groups' => ['read:item']]
-)]
-#[GetCollection(
-    normalizationContext: ['groups' => ['read:collection']]
-)]
-#[Post(
-    denormalizationContext: ['groups' => ['create:item']]
-)]
-#[Patch(
-    denormalizationContext: ['groups' => ['update:item']]
-)]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form_intern']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_intern_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form_intern']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form_intern']])]
 #[Delete]
 class InfoFormIntern
 {
@@ -55,50 +45,93 @@ class InfoFormIntern
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:item', 'read:collection'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     private ?int $id = null;
 
-    #[Groups(['read:item', 'read:collection'])]
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection',
+        'create:info_form_intern',
+        'update:info_form_intern'
+    ])]
     private ?\DateTimeImmutable $dateStart = null;
 
-    #[Groups(['read:item', 'read:collection'])]
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection',
+        'create:info_form_intern',
+        'update:info_form_intern'
+    ])]
     private ?\DateTimeImmutable $dateEnd = null;
 
-    #[Groups(['read:item'])]
     #[ORM\OneToOne(mappedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection',
+        'create:info_form_intern',
+        'update:info_form_intern'
+    ])]
     private ?InfoForm $infoForm = null;
 
     #[ORM\Column(nullable: true, enumType: Gender::class)]
-    #[Groups(['read:item', 'read:collection'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection',
+        'create:info_form_intern',
+        'update:info_form_intern'
+    ])]
     private ?Gender $gender = null;
 
     #[ORM\OneToOne(inversedBy: 'infoFormIntern', cascade: ['persist', 'remove'])]
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection',
+        'create:info_form_intern',
+        'update:info_form_intern'
+    ])]
     private ?InfoFormInternCompany $infoFormInternCompany = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getFirstName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
     }
 
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getLastName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getLastName();
     }
 
-    #[Groups(['read:item', 'read:collection'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getFullName(): ?string
     {
         $firstname = $this->infoForm?->getInternMember()?->getUser()?->getFirstName();
@@ -106,25 +139,37 @@ class InfoFormIntern
         return $firstname && $lastname ? "$firstname $lastname" : null;
     }
 
-    #[Groups(['read:item', 'read:collection'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getEmail(): ?string
     {
         return $this->infoForm?->getInternMember()?->getUser()?->getEmail();
     }
 
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getOfferNumber(): ?string
     {
         return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getOfferNumber();
     }
 
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getTrainingSessionName(): ?string
     {
         return $this->infoForm?->getInternMember()?->getTrainingSession()->first()?->getTraining()?->getName();
     }
 
-    #[Groups(['read:item'])]
+    #[Groups([
+        'read:info_form_intern',
+        'read:info_form_intern_collection'
+    ])]
     public function getTrainers(): ?array
     {
         $organizationMembers = $this->infoForm?->getInternMember()?->getTrainingSession()?->first()?->getOrganizationMembers();

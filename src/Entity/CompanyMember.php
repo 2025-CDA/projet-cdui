@@ -2,17 +2,27 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Enum\CompanyRole;
 use App\Repository\CompanyMemberRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'] )]
+#[Get(normalizationContext: ['groups' => ['read:company_member']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:company_member_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:company_member']])]
+#[Patch(denormalizationContext: ['groups' => ['update:company_member']])]
+#[Delete]
 class CompanyMember
 {
     #[ORM\PrePersist]
@@ -33,21 +43,57 @@ class CompanyMember
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: CompanyRole::class)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?CompanyRole $role = null;
 
     #[ORM\OneToOne(mappedBy: 'companyMember', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'companyMembers')]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?Company $company = null;
 
     #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int

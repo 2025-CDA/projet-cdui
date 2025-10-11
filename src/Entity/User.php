@@ -2,19 +2,34 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource]
+#[ApiResource(order: ['id' => 'ASC'])]
+#[Get(normalizationContext: ['groups' => ['read:user']])]
+#[GetCollection(
+    normalizationContext: ['groups' => ['read:user_collection']],
+//    forceEager: false,
+)]
+#[Post(denormalizationContext: ['groups' => ['create:user']])]
+#[Patch(denormalizationContext: ['groups' => ['update:user']])]
+#[Delete]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\PrePersist]
@@ -35,51 +50,123 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $lastName = null;
 
-
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     public function getFullName(): ?string
     {
         return $this->lastName . ' ' . $this->firstName;
     }
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $login = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?CompanyMember $companyMember = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?OrganizationMember $organizationMember = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?InternMember $internMember = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
