@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsController]
-final class CreateUserController extends AbstractController
+final class UpdateUserController extends AbstractController
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
@@ -21,26 +21,28 @@ final class CreateUserController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[MapRequestPayload] User $user, UrlGeneratorInterface $urlGenerator): JsonResponse
+    // The return type is now explicitly JsonResponse.
+    // We receive the User object that API Platform has already loaded and updated.
+    public function __invoke( User $user): JsonResponse
     {
+        // --- Step 1: Your custom logic ---
         if ($plainPassword = $user->getPlainPassword()) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
             $user->eraseCredentials();
         }
 
-        $user->setRoles(['ROLE_USER']);
-
-        $this->entityManager->persist($user);
+        // Save the changes to the database.
         $this->entityManager->flush();
 
-        $locationUrl = $urlGenerator->generate('_api_/users/{id}{._format}_get', ['id' => $user->getId()]);
+        // --- Step 2: Manually create the successful response ---
 
+        // Use the built-in json() helper from AbstractController.
         return $this->json(
             $user, // The data to serialize
-            Response::HTTP_CREATED, // The 201 status code
-            ['Location' => $locationUrl], // The required "Location" header
-//            ['groups' => 'read:user'] // The serialization group to use for the response body
+            Response::HTTP_OK, // The 200 OK status code for a successful update
+            [], // No special headers are needed for a PATCH response
+//            ['groups' => 'read:user'] // The serialization group for the response body
         );
     }
 }

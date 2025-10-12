@@ -1,5 +1,4 @@
 <?php
-// src/EventListener/UserRegistrationMailListener.php
 
 namespace App\EventListener;
 
