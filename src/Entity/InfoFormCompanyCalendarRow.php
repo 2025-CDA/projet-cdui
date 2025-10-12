@@ -2,17 +2,30 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\WeekDay;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyCalendarRowRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormCompanyCalendarRowRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form_company_calendar_row']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_company_calendar_row_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form_company_calendar_row']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form_company_calendar_row']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_company_calendar_row']])]
+#[Delete]
 class InfoFormCompanyCalendarRow
 {
     #[ORM\PrePersist]
@@ -29,36 +42,91 @@ class InfoFormCompanyCalendarRow
         // Set the updatedAt value on every update
         $this->updatedAt = new \DateTimeImmutable();
     }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: WeekDay::class)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?WeekDay $day = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?\DateTimeImmutable $startMorning = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?\DateTimeImmutable $endMorning = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?\DateTimeImmutable $startAfternoon = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?\DateTimeImmutable $endAfternoon = null;
 
     #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?WorkLocation $workLocation = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoFormCompanyCalendarRow')]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection',
+        'create:info_form_company_calendar_row',
+        'update:info_form_company_calendar_row'
+    ])]
     private ?InfoFormCompany $infoFormCompany = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company_calendar_row',
+        'read:info_form_company_calendar_row_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int

@@ -2,19 +2,65 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserStateProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource]
+#[ApiResource(order: ['id' => 'ASC'])]
+#[Get(normalizationContext: ['groups' => ['read:user']])]
+#[GetCollection(
+    paginationItemsPerPage: 10,
+    paginationMaximumItemsPerPage: 10,
+    paginationClientItemsPerPage: true,
+    normalizationContext: ['groups' => ['read:user_collection']],
+//    forceEager: false,
+)]
+#[Post(
+    denormalizationContext: ['groups' => ['create:user']],
+//    processor: UserStateProcessor::class
+)]
+#[Patch(denormalizationContext: ['groups' => ['update:user']])]
+#[Put(normalizationContext: ['groups' => ['update:user']])]
+#[Delete]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: [
+        'id' => 'exact',
+        'email' => 'partial',
+        'firstName' => 'partial',
+        'lastName' => 'partial',
+        'login' => 'partial'
+    ]
+)]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'createdAt', 'updatedAt'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt', 'updatedAt'])]
+//#[ApiFilter(BooleanFilter::class, properties: ['isTrue'])]
+//#[ApiFilter(RangeFilter::class, properties: ['price'])]
+#[ApiFilter(ExistsFilter::class, properties: ['firstName', 'lastName', 'login', 'password'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\PrePersist]
@@ -35,51 +81,162 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var string|null The hashed password
      */
     #[ORM\Column]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?string $password = null;
 
+
+    /**
+     * @var string|null A temporary property to hold the plain password.
+     */
+    #[Groups([
+        'create:user',
+        'update:user'
+    ])]
+    private ?string $plainPassword = null;
+
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+//    /**
+//     * A visual identifier that represents this user.
+//     * @see UserInterface
+//     */
+//    public function getUserIdentifier(): string
+//    {
+//        return (string) $this->email;
+//    }
+
+//    /**
+//     * @see UserInterface
+//     */
+//    public function eraseCredentials(): void
+//    {
+//        // If you store any temporary, sensitive data on the user, clear it here
+//        $this->plainPassword = null;
+//    }
+
+
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $lastName = null;
 
-
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     public function getFullName(): ?string
     {
         return $this->lastName . ' ' . $this->firstName;
     }
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?string $login = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?CompanyMember $companyMember = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?OrganizationMember $organizationMember = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:user',
+        'read:user_collection',
+        'create:user',
+        'update:user'
+    ])]
     private ?InternMember $internMember = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:user',
+        'read:user_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
@@ -106,7 +263,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -151,8 +308,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function __serialize(): array
     {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data = (array)$this;
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
