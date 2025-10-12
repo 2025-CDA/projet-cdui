@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserStateProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -38,7 +39,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
     normalizationContext: ['groups' => ['read:user_collection']],
 //    forceEager: false,
 )]
-#[Post(denormalizationContext: ['groups' => ['create:user']])]
+#[Post(
+    denormalizationContext: ['groups' => ['create:user']],
+//    processor: UserStateProcessor::class
+)]
 #[Patch(denormalizationContext: ['groups' => ['update:user']])]
 #[Put(normalizationContext: ['groups' => ['update:user']])]
 #[Delete]
@@ -105,16 +109,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var string|null The hashed password
      */
     #[ORM\Column]
     #[Groups([
         'read:user',
-        'read:user_collection',
+        'read:user_collection'
+    ])]
+    private ?string $password = null;
+
+
+    /**
+     * @var string|null A temporary property to hold the plain password.
+     */
+    #[Groups([
         'create:user',
         'update:user'
     ])]
-    private ?string $password = null;
+    private ?string $plainPassword = null;
+
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+//    /**
+//     * A visual identifier that represents this user.
+//     * @see UserInterface
+//     */
+//    public function getUserIdentifier(): string
+//    {
+//        return (string) $this->email;
+//    }
+
+//    /**
+//     * @see UserInterface
+//     */
+//    public function eraseCredentials(): void
+//    {
+//        // If you store any temporary, sensitive data on the user, clear it here
+//        $this->plainPassword = null;
+//    }
+
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
