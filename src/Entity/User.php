@@ -2,6 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,7 +21,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
@@ -25,7 +32,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ApiResource(order: ['id' => 'ASC'])]
 #[Get(normalizationContext: ['groups' => ['read:user']])]
 #[GetCollection(
-    paginationItemsPerPage: 2,
+    paginationItemsPerPage: 10,
+    paginationMaximumItemsPerPage: 10,
+    paginationClientItemsPerPage: true,
     normalizationContext: ['groups' => ['read:user_collection']],
 //    forceEager: false,
 )]
@@ -33,6 +42,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[Patch(denormalizationContext: ['groups' => ['update:user']])]
 #[Put(normalizationContext: ['groups' => ['update:user']])]
 #[Delete]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: [
+        'id' => 'exact',
+        'email' => 'partial',
+        'firstName' => 'partial',
+        'lastName' => 'partial',
+        'login' => 'partial'
+    ]
+)]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'createdAt', 'updatedAt'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt', 'updatedAt'])]
+//#[ApiFilter(BooleanFilter::class, properties: ['isTrue'])]
+//#[ApiFilter(RangeFilter::class, properties: ['price'])]
+#[ApiFilter(ExistsFilter::class, properties: ['firstName', 'lastName', 'login', 'password'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\PrePersist]
@@ -196,7 +220,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -241,8 +265,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function __serialize(): array
     {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data = (array)$this;
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
