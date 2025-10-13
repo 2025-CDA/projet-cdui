@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,7 +24,10 @@ final class CreateUserController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[MapRequestPayload] User $user, UrlGeneratorInterface $urlGenerator): JsonResponse
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function __invoke(#[MapRequestPayload] User $user, UrlGeneratorInterface $urlGenerator, MailerInterface $mailer): JsonResponse
     {
         if ($plainPassword = $user->getPlainPassword()) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
@@ -29,12 +35,18 @@ final class CreateUserController extends AbstractController
             $user->eraseCredentials();
         }
 
-        $user->setRoles(['ROLE_USER']);
-
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $locationUrl = $urlGenerator->generate('_api_/users/{id}{._format}_get', ['id' => $user->getId()]);
+
+        $message = (new Email())
+            ->from('registration@easypae.com')
+            ->to($user->getEmail())
+            ->subject('A new user account has been created')
+            ->text(sprintf('The user #%d has been created.', $user->getId()));
+
+        $mailer->send($message);
 
         return $this->json(
             $user, // The data to serialize
