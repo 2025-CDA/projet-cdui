@@ -39,19 +39,14 @@ export default function App() {
                 ))}
             </ul>
 
-<<<<<<< HEAD
-        <Button/>
-
         <CardFormation trainingTitle="Nom de la formation" nbOffer="215015" trainerName= "Jérémie" startDateInternship= "00/00/0000" endDateInternship= "00/00/0000" percentageValidationPae= "20"/>
          <br />
          <hr />
                 
-=======
         <Button color={"blue"} varity={"solide"}>click me </Button>
         <Button color={"blue"} varity={"outline"}>click me </Button>
         
             
->>>>>>> origin/dev
         </div>
     );
 }
