@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
+import CardFormation from "./ui/CardFormation"
 
 
 export default function App() {
@@ -39,7 +40,11 @@ export default function App() {
             </ul>
 
         <Button/>
-            
+
+        <CardFormation trainingTitle="Nom de la formation" nbOffer="215015" trainerName= "Jérémie" startDateInternship= "00/00/0000" endDateInternship= "00/00/0000" percentageValidationPae= "20"/>
+         <br />
+         <hr />
+                
         </div>
     );
 }
