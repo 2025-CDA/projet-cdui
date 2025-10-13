@@ -43,15 +43,17 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 //    forceEager: false,
 )]
 #[Post(
-    controller: CreateUserController::class,
+//    controller: CreateUserController::class,
     denormalizationContext: ['groups' => ['create:user']],
-    write: false
+//    read: false,
+//    write: false,
+
 //    processor: UserStateProcessor::class
 )]
 #[Patch(
-    controller: UpdateUserController::class,
+//    controller: UpdateUserController::class,
     denormalizationContext: ['groups' => ['update:user']],
-    write: false
+//    write: false
 )]
 #[Put(denormalizationContext: ['groups' => ['update:user']])]
 #[Delete]

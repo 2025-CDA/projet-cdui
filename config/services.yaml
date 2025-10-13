@@ -20,6 +20,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/EventListener/UserPasswordHasherListener.php'
+            - '../src/EventListener/UserRegistrationMailListener.php'
             - '../src/State/UserStateProcessor.php'
 
 #    App\State\UserStateProcessor:
