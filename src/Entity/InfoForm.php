@@ -17,7 +17,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/api/info_forms/{id}/status_update',
+            routeName: 'company.publication',
+            name: 'publication',
+//            controller: CreateCompanyPublication::class
+        )
+    ],
+    order: ['createdAt' => 'DESC']
+)]
 #[Get(normalizationContext: ['groups' => ['read:info_form']])]
 #[GetCollection(normalizationContext: ['groups' => ['read:info_form_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:info_form']])]
