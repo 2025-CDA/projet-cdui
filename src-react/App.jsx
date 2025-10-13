@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
+import  Alert from "./ui/Alerts";
+
+
 
 export default function App() {
+
+    const [showAlert, setShowAlert] = useState(true);
+
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -35,7 +41,41 @@ export default function App() {
                 ))}
             </ul>
 
-            <Button />
+        <Button />
+        <Button color={"blue"} varity={"solide"}>click me </Button>
+        <Button color={"blue"} varity={"outline"}>click me </Button>
+        <br/><br/><br/>
+
+        <Alert
+            type="error"
+            title="Ereeur Erreur "
+            message="aaaaaaaaaaa."
+            show={showAlert}
+            onClose={() => setShowAlert(true)}
+        />
+
+        <Alert
+            type="warning"
+            title="warning warning"
+            message="aaaaaaaaaaa."
+            show={showAlert}
+            onClose={() => setShowAlert(true)}
+        />
+
+        <Alert
+            type="success"
+            title="success success"
+            message="aaaaaaaaaaa."
+            show={showAlert}
+            onClose={() => setShowAlert(true)}
+        />
+        <Alert
+            type="info"
+            title="info info"
+            message="aaaaaaaaaaa."
+            show={showAlert}
+            onClose={() => setShowAlert(true)}
+        />
         </div>
     );
 }
