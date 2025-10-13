@@ -16,8 +16,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\User\CreateUserController;
+use App\Controller\User\UpdateUserController;
 use App\Repository\UserRepository;
-use App\State\UserStateProcessor;
+
+//use App\State\UserStateProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,11 +43,19 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 //    forceEager: false,
 )]
 #[Post(
+//    controller: CreateUserController::class,
     denormalizationContext: ['groups' => ['create:user']],
+//    read: false,
+//    write: false,
+
 //    processor: UserStateProcessor::class
 )]
-#[Patch(denormalizationContext: ['groups' => ['update:user']])]
-#[Put(normalizationContext: ['groups' => ['update:user']])]
+#[Patch(
+//    controller: UpdateUserController::class,
+    denormalizationContext: ['groups' => ['update:user']],
+//    write: false
+)]
+#[Put(denormalizationContext: ['groups' => ['update:user']])]
 #[Delete]
 #[ApiFilter(
     SearchFilter::class,
@@ -127,37 +138,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'update:user'
     ])]
     private ?string $plainPassword = null;
-
-
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword(?string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
-        return $this;
-    }
-
-//    /**
-//     * A visual identifier that represents this user.
-//     * @see UserInterface
-//     */
-//    public function getUserIdentifier(): string
-//    {
-//        return (string) $this->email;
-//    }
-
-//    /**
-//     * @see UserInterface
-//     */
-//    public function eraseCredentials(): void
-//    {
-//        // If you store any temporary, sensitive data on the user, clear it here
-//        $this->plainPassword = null;
-//    }
-
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
@@ -299,6 +279,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        // If a plain password is set, it means the user is being modified.
+        // We must update a persisted field to trigger the preUpdate event.
+        if ($plainPassword !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
