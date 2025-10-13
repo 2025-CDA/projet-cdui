@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
 
-
 export default function App() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
                 // Await the response from the GET request
@@ -24,7 +22,6 @@ export default function App() {
     }, []);
 
     return (
-        
         <div>
             <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-primary"}>Test Array</h1>
@@ -38,8 +35,7 @@ export default function App() {
                 ))}
             </ul>
 
-        <Button/>
-            
+            <Button />
         </div>
     );
 }
