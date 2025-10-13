@@ -5,7 +5,6 @@ import  Alert from "./ui/Alerts";
 
 
 
-
 export default function App() {
 
     const [showAlert, setShowAlert] = useState(true);
@@ -13,7 +12,6 @@ export default function App() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
                 // Await the response from the GET request
@@ -30,7 +28,6 @@ export default function App() {
     }, []);
 
     return (
-        
         <div>
             <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-primary"}>Test Array</h1>
@@ -44,6 +41,7 @@ export default function App() {
                 ))}
             </ul>
 
+        <Button />
         <Button color={"blue"} varity={"solide"}>click me </Button>
         <Button color={"blue"} varity={"outline"}>click me </Button>
         <br/><br/><br/>
@@ -78,11 +76,6 @@ export default function App() {
             show={showAlert}
             onClose={() => setShowAlert(true)}
         />
-
-
-
-        
-            
         </div>
     );
 }

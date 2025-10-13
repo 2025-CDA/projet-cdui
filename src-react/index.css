@@ -8,37 +8,38 @@
 @source "../node_modules/preline/dist/*.js";
 @import "../node_modules/preline/variants.css";
 
-
-
 /* 3. Variables globales CSS */
 :root {
-  --primary-color: #2563EB;
-  --secondary-color: #0187FE;
-  --logo-color: #EBF2FF;
-  --secondary-text: #919397;
-  --background-color: #FFFF;
-  --primary-text: #1F2937;
+    --primary-color: #2563eb;
+    --secondary-color: #0187fe;
+    --logo-color: #ebf2ff;
+    --secondary-text: #919397;
+    --background-color: #ffff;
+    --primary-text: #1f2937;
 }
 
 @theme inline {
-    --color-primary : var(--primary-color);
-    --color-secondary : var(--secondary-color);
-    --color-logo : var(--logo-color);
-    --color-secondary-text : var(--secondary-text);
-    --color-background : var(--background-color);
-    --color-primary-text : var(--primary-text);
+    --color-primary: var(--primary-color);
+    --color-secondary: var(--secondary-color);
+    --color-logo: var(--logo-color);
+    --color-secondary-text: var(--secondary-text);
+    --color-background: var(--background-color);
+    --color-primary-text: var(--primary-text);
 }
 /* 4. Classe CSS manuelle (utilisable partout) */
-
 
 /* 5. Style global body */
 body {
     margin: 0;
     min-width: 100vw;
     min-height: 100vh;
-    font-family: Outfit;
+    /* color: white; */
     font-size: 18px;
+}
 
+label {
+    font-size: 14px;
+    font-weight: 500;
 }
 
 h1 {
@@ -58,7 +59,6 @@ h4 {
 span {
     font-size: 16px;
 }
-
 
 /*------------------------------ Mobile ------------------------------*/
 
@@ -80,8 +80,3 @@ span {
 .span-mobile {
     font-size: 12px;
 }
-
-
-
-
-
