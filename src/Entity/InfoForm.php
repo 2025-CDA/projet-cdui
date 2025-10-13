@@ -2,41 +2,130 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\InfoFormStatus;
 use App\Repository\InfoFormRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: InfoFormRepository::class)]
-#[ApiResource]
-
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form']])]
+#[Delete]
 class InfoForm
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: InfoFormStatus::class)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormStatus $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForm')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InternMember $internMember = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormIntern $infoFormIntern = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
-    private ?InfoFormOrganization $inforFormOrganization = null;
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
+    private ?InfoFormOrganization $infoFormOrganization = null;
 
     #[ORM\OneToOne(inversedBy: 'infoForm', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?InfoFormCompany $infoFormCompany = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?Company $company = null;
 
     #[ORM\ManyToOne(inversedBy: 'infoForms')]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection',
+        'create:info_form',
+        'update:info_form'
+    ])]
     private ?Organization $organization = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form',
+        'read:info_form_collection'
+    ])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -79,14 +168,14 @@ class InfoForm
         return $this;
     }
 
-    public function getInforFormOrganization(): ?InfoFormOrganization
+    public function getInfoFormOrganization(): ?InfoFormOrganization
     {
-        return $this->inforFormOrganization;
+        return $this->infoFormOrganization;
     }
 
-    public function setInforFormOrganization(?InfoFormOrganization $inforFormOrganization): static
+    public function setInfoFormOrganization(?InfoFormOrganization $infoFormOrganization): static
     {
-        $this->inforFormOrganization = $inforFormOrganization;
+        $this->infoFormOrganization = $infoFormOrganization;
 
         return $this;
     }
@@ -123,6 +212,30 @@ class InfoForm
     public function setOrganization(?Organization $organization): static
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

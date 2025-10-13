@@ -28,6 +28,18 @@ security:
                 # where to redirect after logout
                 # target: app_any_route
 
+        api:
+            pattern:   ^/api
+            stateless: true # <-- This is the setting causing the error if a session is used
+#            jwt: ~
+#            composer require lexik/jwt-authentication-bundle
+#            php bin/console lexik:jwt:generate-keypair
+#            add private.pem file to .gitignore
+#            then in config/routes.yaml add this :
+#               api_login_check:
+#                   path: /api/login_check
+
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

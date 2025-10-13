@@ -2,30 +2,85 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\InfoFormOrganizationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormOrganizationRepository::class)]
-#[ApiResource]
-
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form_organization']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_organization_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form_organization']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form_organization']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_organization']])]
+#[Delete]
 class InfoFormOrganization
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:info_form_organization', 'read:info_form_organization_collection'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[Groups([
+        'read:info_form_organization',
+        'read:info_form_organization_collection',
+        'create:info_form_organization',
+        'update:info_form_organization'
+    ])]
     private ?\DateTimeImmutable $validationDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_organization',
+        'read:info_form_organization_collection',
+        'create:info_form_organization',
+        'update:info_form_organization'
+    ])]
     private ?string $signature = null;
 
-    #[ORM\OneToOne(mappedBy: 'inforFormOrganization', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'infoFormOrganization', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form_organization',
+        'read:info_form_organization_collection',
+        'create:info_form_organization',
+        'update:info_form_organization'
+    ])]
     private ?InfoForm $infoForm = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read:info_form_organization', 'read:info_form_organization_collection'])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read:info_form_organization', 'read:info_form_organization_collection'])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -65,15 +120,39 @@ class InfoFormOrganization
     {
         // unset the owning side of the relation if necessary
         if ($infoForm === null && $this->infoForm !== null) {
-            $this->infoForm->setInforFormOrganization(null);
+            $this->infoForm->setInfoFormOrganization(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($infoForm !== null && $infoForm->getInforFormOrganization() !== $this) {
-            $infoForm->setInforFormOrganization($this);
+        if ($infoForm !== null && $infoForm->getInfoFormOrganization() !== $this) {
+            $infoForm->setInfoFormOrganization($this);
         }
 
         $this->infoForm = $infoForm;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
