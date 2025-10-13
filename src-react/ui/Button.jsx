@@ -17,7 +17,7 @@ export default function Button ({style, icon, color,varity, children, onClick, p
     <div>
       <button
         type="button"
-        className={`py-2 px-4 inline-flex items-center justify-cente gap-x-2 text-sm font-medium rounded-lg border w-full  ${varity === "outline" ? "border" : ""} ${varityClass} focus:outline-none `}
+        className={`py-2 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-medium rounded-lg border w-full  ${varity === "outline" ? "border" : ""} ${varityClass} focus:outline-none `}
         style={style}
         onClick={onClick}
         {...props}
