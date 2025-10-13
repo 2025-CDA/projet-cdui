@@ -19,7 +19,17 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/companies/{id}/publication',
+            routeName: 'company.publication',
+            name: 'publication',
+//            controller: CreateCompanyPublication::class
+        )
+    ],
+    order: ['createdAt' => 'DESC']
+)]
 #[Get(normalizationContext: ['groups' => ['read:company']])]
 #[GetCollection(normalizationContext: ['groups' => ['read:company_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:company']])]

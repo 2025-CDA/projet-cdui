@@ -33,7 +33,16 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource(order: ['id' => 'ASC'])]
+#[ApiResource(
+//    operations: [
+//        new Post(
+//            uriTemplate: '/companies/{id}/publication',
+//            name: 'publication',
+////            controller: CreateBookPublication::class
+//        )
+//    ],
+    order: ['id' => 'ASC']
+)]
 #[Get(normalizationContext: ['groups' => ['read:user']])]
 #[GetCollection(
     paginationItemsPerPage: 10,

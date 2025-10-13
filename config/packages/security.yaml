@@ -6,16 +6,10 @@ security:
 
     providers:
 
-#        users:
-#            entity:
-#                class: App\Entity\User
-#                property: email
-
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
-
 
     firewalls:
         dev:
