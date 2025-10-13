@@ -38,7 +38,9 @@ export default function App() {
                 ))}
             </ul>
 
-        <Button/>
+        <Button color={"blue"} varity={"solide"}>click me </Button>
+        <Button color={"blue"} varity={"outline"}>click me </Button>
+        
             
         </div>
     );
