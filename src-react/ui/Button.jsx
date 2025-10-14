@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Button ({style, icon, color,varity, children, onClick, props}) {
+export default function Button ({customClass, icon, color,varity, children, onClick, props}) {
       // Définition des variantes et des couleurs
   const colorClasses = {
     blue: {
@@ -11,14 +11,13 @@ export default function Button ({style, icon, color,varity, children, onClick, p
   };
 
   // Styles par défaut
-  let varityClass = colorClasses[color] && colorClasses[color][varity] ? colorClasses[color][varity] : colorClasses["blue"]["solid"];
+  let varityClass = colorClasses[color] && colorClasses[color][varity] ? colorClasses[color][varity] : null;
 
   return (
     <div>
       <button
         type="button"
-        className={`py-2 px-4 inline-flex items-center justify-cente gap-x-2 text-sm font-medium rounded-lg border w-full  ${varity === "outline" ? "border" : ""} ${varityClass} focus:outline-none `}
-        style={style}
+        className={`py-2 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-medium rounded-lg border w-full  ${varity === "outline" ? "border" : ""} ${varityClass} focus:outline-none ${customClass}`}
         onClick={onClick}
         {...props}
       >
