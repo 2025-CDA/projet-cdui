@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
 import  Alert from "./ui/Alerts";
+import Notification from "./ui/Notification";
+
 
 
 
 
 export default function App() {
 
-    const [showAlert, setShowAlert] = useState(true);
+    
 
     const [data, setData] = useState([]);
 
@@ -47,37 +49,62 @@ export default function App() {
         <Button color={"blue"} varity={"solide"}>click me </Button>
         <Button color={"blue"} varity={"outline"}>click me </Button>
         <br/><br/><br/>
+        <div className="flex gap-10">
+            <div>
+                <Alert 
+                    type='error'
+                    title= 'successfully and successfully '
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='success'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='warning'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='info'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
+            </div>
+            <div>
+                <Notification
+                    type='uploadSuccess'
+                    title= 'upload successfully and successfully  '
+                    message="aaaaaaaaaaa." 
+                />
 
-        <Alert
-            type="error"
-            title="Ereeur Erreur "
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
+                <Notification
+                    type='error'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."  
+                />
+                <Notification
+                    type='success'
+                    title= 'successfully and successfully  ' 
+                />
+                <Notification
+                    type='info'
+                    title= 'successfully and successfully  '
+                />
 
-        <Alert
-            type="warning"
-            title="warning warning"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
+                <Notification
+                    type='action'
+                    title= 'successfully and successfully  '
+                />
+            </div>
+        </div>
 
-        <Alert
-            type="success"
-            title="success success"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
-        <Alert
-            type="info"
-            title="info info"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
+
+
+
+            
+
 
 
 
