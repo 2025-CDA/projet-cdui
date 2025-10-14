@@ -15,7 +15,7 @@
   --logo-color: #EBF2FF;
   --secondary-text: #919397;
   --background-color: #FFFF;
-  --primary-text: #1F2937;
+  --primary-text: #372b1f;
 }
 
 @theme inline {
@@ -34,7 +34,7 @@ body {
   margin: 0;
   min-width: 100vw;
   min-height: 100vh;
-  color: white;
+  
   font-size: 18;
 }
 

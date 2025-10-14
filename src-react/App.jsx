@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
-
+import Label from "./ui/Label";
 
 export default function App() {
     const [data, setData] = useState([]);
@@ -19,12 +19,12 @@ export default function App() {
                 console.error("Failed to fetch data:", error);
             }
         };
-
         fetchData();
     }, []);
 
-    return (
-        
+    // console.log(data[0])
+
+    return (   
         <div>
             <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-primary"}>Test Array</h1>
@@ -33,13 +33,20 @@ export default function App() {
             <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-amber-500"}>Test Array</h1>
             <ul>
-                {data.map((item) => (
-                    <li key={item.id}>{item.name}</li>
-                ))}
+                {
+                    data.map((item) => (
+                        <li style={{color:"var(--primary-text)"}} key={item.id}> {item.name} </li>   
+                    ))
+                }
             </ul>
-
-        <Button/>
-            
+            <Button/>   
+            <Label
+                labelFor={"input"} //textaria, select, checkbox, 
+                text= {"Email"} // Le contenu du label
+                weight= {"black"} // light, normal, medium etc.
+                color= {"secondary-text"} //secondary-text ou primary-tex
+                size={"base"} //sm, base, xl, 2xl etc.
+            />      
         </div>
     );
 }
