@@ -33,7 +33,7 @@ security:
                 # target: app_any_route
 
         main:
-            pattern: ^/api/login
+            pattern: ^/api
             stateless: true
             json_login:
                 check_path: /api/login_check        # Route exposée pour la connexion
