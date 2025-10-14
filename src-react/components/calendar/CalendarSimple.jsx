@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import './Calendar.css';
+import Button from '../../ui/Button';
+import { ChevronUp, Calendar, ChevronDown} from 'lucide-react';
+
 
 const MONTHS_FR = [
     "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -60,7 +63,11 @@ function getCalendarRows(month, year) {
     return weeks;
 }
 
-function CalendarSimple({ periodStart, periodEnd }) {
+function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
+
+    shrinkable && {};
+
+
     // Immutable Date, convertir en JS Date
     const startDate = periodStart && periodStart.toDate ? periodStart.toDate() : periodStart;
     const endDate = periodEnd && periodEnd.toDate ? periodEnd.toDate() : periodEnd;
@@ -132,130 +139,159 @@ function CalendarSimple({ periodStart, periodEnd }) {
     }
 
     return (
-        <div className="w-80 pl-2 pr-2 flex flex-col bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-            {/* Affichage du J- / J+ */}
-            {jValue && (
-                <div className="mt-2 pb-5 text-center text-sm font-bold text-primary-text">
-                    {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
-                </div>
-            )}
-            <div className=" flex flex-col bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-                <div className="p-3 space-y-0.5">
-
-                    {/* ---------- */}
-                    {/* Mois/Année */}
-                    {/* ---------- */}
-
-                    <div className="grid grid-cols-5 items-center gap-x-3 mx-1.5 pb-3">
-
-                        {/* Précédent */}
-                        <div className="col-span-1">
-                            <button
-                                type="button"
-                                className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
-                                aria-label="Précédent"
-                                onClick={handlePrev}>
-                                <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                            </button>
+        <div>
+            <div className="w-80 pl-2 pr-2 mb-3 flex flex-col bg-white border border-gray-200  rounded-xl overflow-hidden">
+                {/* Affichage du J- / J+ */}
+                {jValue && (
+                    <div className="mt-2 pb-5 text-center text-sm font-bold text-primary-text">
+                        {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
+                        <div className=''>
+                            {/* ------------------------------------------ régler le style de calendar et date du jour -------------------------------------- */}
+                            <Calendar width={16}/>
+                            {`${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getFullYear()}`}
                         </div>
-
-                        {/* Mois/Année */}
-                        <div className="col-span-3 flex justify-center space-around gap-2">
-                            <select
-                                value={month}
-                                onChange={handleMonthChange}
-                                className="rounded py-1 text-primary-text no-arrow text-sm bg-white">
-                                {MONTHS_FR.map((m, idx) => (
-                                    <option value={idx} key={m}>{m}</option>
-                                ))}
-                            </select>
-                            <select
-                                value={year}
-                                onChange={handleYearChange}
-                                className="rounded py-1 text-primary-text no-arrow text-sm bg-white">
-                                {years.map((y) => (
-                                    <option value={y} key={y}>{y}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Suivant */}
-                        <div className="col-span-1 flex justify-end">
-                            <button
-                                type="button"
-                                className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
-                                aria-label="Suivant"
-                                onClick={handleNext}>
-                                <svg className="shrink-0 size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                            </button>
-                        </div>
+                        {/* Affichage de la période PAE */}
+                        {startDate && endDate && (
+                            <div className="pb-3 text-center text-xs font-normal text-primary-text">
+                                Période PAE du :{" "}
+                                {`${startDate.getDate().toString().padStart(2, "0")}/${(startDate.getMonth() + 1).toString().padStart(2, "0")}/${startDate.getFullYear()}`}
+                                {" "}au{" "}
+                                {`${endDate.getDate().toString().padStart(2, "0")}/${(endDate.getMonth() + 1).toString().padStart(2, "0")}/${endDate.getFullYear()}`}
+                            </div>
+                        )}
+                        {/* Période PAE du : {periodStart} au {periodEnd} */}
+                        {shrinkable && (<Button icon={<ChevronDown />}></Button>)}
+                        {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
                     </div>
+                )}
+            </div>
+            <div className="w-80 pl-2 pr-2 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden">
+                {/* Affichage du J- / J+ */}
+                {jValue && (
+                    <div className="mt-2 pb-5 text-center text-sm font-bold text-primary-text">
+                        {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
+                        {shrinkable && (<Button icon={<ChevronUp />}></Button>)}
+                        {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
+                    </div>
+                )}
+                <div className=" flex flex-col bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden">
+                    <div className="p-3 space-y-0.5">
 
-                    {/* ------------------- */}
-                    {/* Jours de la semaine */}
-                    {/* ------------------- */}
-                    <div className="flex pb-1.5">
-                        {DAYS_FR.map((d) => (
-                            <span key={d} className="m-px w-10 block text-center text-xs text-gray-500">
-                                {d}
-                            </span>
+                        {/* ---------- */}
+                        {/* Mois/Année */}
+                        {/* ---------- */}
+
+                        <div className="grid grid-cols-5 items-center gap-x-3 mx-1.5 pb-3">
+
+                            {/* Précédent */}
+                            <div className="col-span-1">
+                                <button
+                                    type="button"
+                                    className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
+                                    aria-label="Précédent"
+                                    onClick={handlePrev}>
+                                    <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                </button>
+                            </div>
+
+                            {/* Mois/Année */}
+                            <div className="col-span-3 flex justify-center space-around gap-2">
+                                <select
+                                    value={month}
+                                    onChange={handleMonthChange}
+                                    className="rounded py-1 text-primary-text no-arrow text-sm bg-white">
+                                    {MONTHS_FR.map((m, idx) => (
+                                        <option value={idx} key={m}>{m}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={year}
+                                    onChange={handleYearChange}
+                                    className="rounded py-1 text-primary-text no-arrow text-sm bg-white">
+                                    {years.map((y) => (
+                                        <option value={y} key={y}>{y}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Suivant */}
+                            <div className="col-span-1 flex justify-end">
+                                <button
+                                    type="button"
+                                    className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
+                                    aria-label="Suivant"
+                                    onClick={handleNext}>
+                                    <svg className="shrink-0 size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* ------------------- */}
+                        {/* Jours de la semaine */}
+                        {/* ------------------- */}
+                        <div className="flex pb-1.5">
+                            {DAYS_FR.map((d) => (
+                                <span key={d} className="m-px w-10 block text-center text-xs text-gray-500">
+                                    {d}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* ------------------- */}
+                        {/* Jours du calendrier */}
+                        {/* ------------------- */}
+                        {weeks.map((week, i) => (
+                            <div className="flex" key={i}>
+                                {week.map(({ day, currentMonth, key, date }, dayIdx) => {
+                                    // Détection du premier et dernier jour de la période
+                                    const isStart = startDate && date.getFullYear() === startDate.getFullYear() && date.getMonth() === startDate.getMonth() && date.getDate() === startDate.getDate();
+                                    const isEnd = endDate && date.getFullYear() === endDate.getFullYear() && date.getMonth() === endDate.getMonth() && date.getDate() === endDate.getDate();
+                                    const inPeriod = isInInternshipPeriod(date);
+
+                                    // Détection du premier et dernier jour de la semaine
+                                    const isFirstOfWeek = dayIdx === 0;
+                                    const isLastOfWeek = dayIdx === 6;
+
+                                    // Détection du jour courant
+                                    const isToday = date.getFullYear() === todayY && date.getMonth() === todayM && date.getDate() === todayD;
+
+                                    // Classes pour arrondir le fond logo
+                                    let logoBgClass = "absolute z-0 w-10 h-10 bg-logo";
+                                    if (inPeriod && !isStart && !isEnd) {
+                                        if (isFirstOfWeek) logoBgClass += " rounded-l-full";
+                                        if (isLastOfWeek) logoBgClass += " rounded-r-full";
+                                    }
+                                    if (isStart) logoBgClass += " rounded-l-full";
+                                    if (isEnd) logoBgClass += " rounded-r-full";
+
+                                    // Classes pour le bouton principal
+                                    let btnClass = `size-10 flex justify-center items-center border-2 border-none text-xs rounded-full z-10
+                                        ${currentMonth ? "text-primary-text hover:border-primary hover:border-3 hover:border-solid" : "text-secondary-text"}
+                                        ${currentMonth ? "" : "disabled:opacity-50 disabled:pointer-events-none"}
+                                        ${isStart ? "bg-primary text-white" : ""}
+                                        ${isEnd ? "bg-primary text-white" : ""}
+                                        ${isToday ? "border-3 border-primary border-solid" : ""}
+                                    `;
+                                    if (isStart && isFirstOfWeek) btnClass += " rounded-l-full";
+                                    if (isEnd && isLastOfWeek) btnClass += " rounded-r-full";
+
+                                    return (
+                                        <div key={key} className="relative flex justify-center items-center">
+                                            {inPeriod && (
+                                                <div className={logoBgClass} />
+                                            )}
+                                            <button
+                                                type="button"
+                                                className={btnClass}
+                                                disabled={!currentMonth}>
+                                                {day}
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         ))}
                     </div>
-
-                    {/* ------------------- */}
-                    {/* Jours du calendrier */}
-                    {/* ------------------- */}
-                    {weeks.map((week, i) => (
-                        <div className="flex" key={i}>
-                            {week.map(({ day, currentMonth, key, date }, dayIdx) => {
-                                // Détection du premier et dernier jour de la période
-                                const isStart = startDate && date.getFullYear() === startDate.getFullYear() && date.getMonth() === startDate.getMonth() && date.getDate() === startDate.getDate();
-                                const isEnd = endDate && date.getFullYear() === endDate.getFullYear() && date.getMonth() === endDate.getMonth() && date.getDate() === endDate.getDate();
-                                const inPeriod = isInInternshipPeriod(date);
-
-                                // Détection du premier et dernier jour de la semaine
-                                const isFirstOfWeek = dayIdx === 0;
-                                const isLastOfWeek = dayIdx === 6;
-
-                                // Détection du jour courant
-                                const isToday = date.getFullYear() === todayY && date.getMonth() === todayM && date.getDate() === todayD;
-
-                                // Classes pour arrondir le fond logo
-                                let logoBgClass = "absolute z-0 w-10 h-10 bg-logo";
-                                if (inPeriod && !isStart && !isEnd) {
-                                    if (isFirstOfWeek) logoBgClass += " rounded-l-full";
-                                    if (isLastOfWeek) logoBgClass += " rounded-r-full";
-                                }
-                                if (isStart) logoBgClass += " rounded-l-full";
-                                if (isEnd) logoBgClass += " rounded-r-full";
-
-                                // Classes pour le bouton principal
-                                let btnClass = `size-10 flex justify-center items-center border-2 border-transparent text-xs rounded-full z-10
-                                    ${currentMonth ? "text-primary-text hover:border-blue-600 hover:border-3" : "text-secondary-text"}
-                                    ${currentMonth ? "" : "disabled:opacity-50 disabled:pointer-events-none"}
-                                    ${isStart ? "bg-primary text-white" : ""}
-                                    ${isEnd ? "bg-primary text-white" : ""}
-                                    ${isToday ? "border-3 border-blue-600" : ""}
-                                `;
-                                if (isStart && isFirstOfWeek) btnClass += " rounded-l-full";
-                                if (isEnd && isLastOfWeek) btnClass += " rounded-r-full";
-
-                                return (
-                                    <div key={key} className="relative flex justify-center items-center">
-                                        {inPeriod && (
-                                            <div className={logoBgClass} />
-                                        )}
-                                        <button
-                                            type="button"
-                                            className={btnClass}
-                                            disabled={!currentMonth}>
-                                            {day}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))}
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 <CalendarSimple
     periodStart={new Date(2025, 9, 10)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
     periodEnd={new Date(2025, 11, 25)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
+    shrinkable={true}
 />
 
 import CalendarSimple from "./components/calendar/calendarSimple";
