@@ -1,7 +1,14 @@
 api_platform:
-    title: Hello API Platform
+    title: API Platform
     version: 1.0.0
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+#        pagination_partial: true
+    eager_loading:
+        max_joins: 100
+#        enabled: false
+#        force_eager: false
+#        fetch_partial: true
+

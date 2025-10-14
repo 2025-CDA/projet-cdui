@@ -2,6 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\Gender;
 use App\Enum\WorkLocation;
 use App\Repository\InfoFormCompanyRepository;
@@ -10,88 +16,276 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: InfoFormCompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form_company']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_company_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form_company']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form_company']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_company']])]
+#[Delete]
 class InfoFormCompany
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $fax = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $activity = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $activityDescription = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $stamp = null;
 
     #[ORM\Column(nullable: true, enumType: Gender::class)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?Gender $legalRepresentativeGender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $legalRepresentativeLastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $legalRepresentativeFirstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $legalRepresentativeSignature = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $legalRepresentativeEmail = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?\DateTimeImmutable $interviewStartDateTime = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?\DateTimeImmutable $interviewEndDateTime = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?bool $agreeTerms = null;
 
     #[ORM\Column(nullable: true, enumType: WorkLocation::class)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?WorkLocation $workLocation = null;
 
     #[ORM\Column(nullable: true, enumType: Gender::class)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?Gender $tutorGender = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $tutorFirstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $tutorLastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $tutorEmail = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?string $tutorPhoneNumber = null;
 
     #[ORM\OneToOne(mappedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private ?InfoForm $infoForm = null;
 
     /**
      * @var Collection<int, InfoFormCompanyCalendarRow>
      */
     #[ORM\OneToMany(targetEntity: InfoFormCompanyCalendarRow::class, mappedBy: 'infoFormCompany')]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection',
+        'create:info_form_company',
+        'update:info_form_company'
+    ])]
     private Collection $infoFormCompanyCalendarRow;
 
-    #[ORM\OneToOne(inversedBy: 'infoFormCompany', cascade: ['persist', 'remove'])]
-    private ?InfoFormInternCompany $infoFormInternCompany = null;
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    private ?\DateTimeImmutable $createdAt = null;
 
-// TODO:
-// - companyName
-// - address
-// - email
-// - contactName
-//
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    public function getName(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getCompanyName();
+    }
+
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    public function getAddress(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getAddress();
+    }
+
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    public function getEmail(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getEmail();
+    }
+
+    #[Groups([
+        'read:info_form_company',
+        'read:info_form_company_collection'
+    ])]
+    public function getContactName(): ?string
+    {
+        return $this->infoForm?->getInfoFormIntern()?->getInfoFormInternCompany()?->getContactName();
+    }
 
     public function __construct()
     {
@@ -361,24 +555,34 @@ class InfoFormCompany
 
     public function removeInfoFormCompanyCalendarRow(InfoFormCompanyCalendarRow $infoFormCompanyCalendarRow): static
     {
-        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow)) {
-            // set the owning side to null (unless already changed)
-            if ($infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
-                $infoFormCompanyCalendarRow->setInfoFormCompany(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->infoFormCompanyCalendarRow->removeElement($infoFormCompanyCalendarRow) && $infoFormCompanyCalendarRow->getInfoFormCompany() === $this) {
+            $infoFormCompanyCalendarRow->setInfoFormCompany(null);
         }
 
         return $this;
     }
 
-    public function getInfoFormInternCompany(): ?InfoFormInternCompany
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->infoFormInternCompany;
+        return $this->updatedAt;
     }
 
-    public function setInfoFormInternCompany(?InfoFormInternCompany $infoFormInternCompany): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
-        $this->infoFormInternCompany = $infoFormInternCompany;
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

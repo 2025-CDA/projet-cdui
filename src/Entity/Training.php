@@ -2,31 +2,95 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\TrainingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ORM\Entity(repositoryClass: TrainingRepository::class)]
-#[ApiResource]
-
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:training']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:training_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:training']])]
+#[Patch(denormalizationContext: ['groups' => ['update:training']])]
+#[Put(denormalizationContext: ['groups' => ['update:training']])]
+#[Delete]
 class Training
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:training',
+        'read:training_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:training',
+        'read:training_collection',
+        'create:training',
+        'update:training',
+    ])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, TrainingSession>
      */
     #[ORM\OneToMany(targetEntity: TrainingSession::class, mappedBy: 'training')]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:training',
+        'read:training_collection',
+        'create:training',
+        'update:training'
+    ])]
     private Collection $trainingSessions;
+
+    #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:training',
+        'read:training_collection'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:training',
+        'read:training_collection'
+    ])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct()
     {
@@ -76,6 +140,30 @@ class Training
                 $trainingSession->setTraining(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

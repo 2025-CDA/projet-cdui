@@ -8,6 +8,12 @@ framework:
     #esi: true
     #fragments: true
 
+#    serializer:
+#        default_context:
+#            circular_reference_limit: 1
+#            enable_max_depth: true
+#            max_depth: 1
+
 when@test:
     framework:
         test: true
