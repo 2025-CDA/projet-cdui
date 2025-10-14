@@ -1,4 +1,12 @@
-Of course. I can certainly integrate these changes for you. I will restructure the "Running the Application" section to be more streamlined and add a new section for Mailpit, all while maintaining the helpful and clear tone of your existing documentation.
+ main:
+        pattern: ^/api/login
+        stateless: true
+        json_login:
+            check_path: /api/login_check        # Route exposée pour la connexion
+            username_path: email                # Chemin dans le JSON pour le nom d'utilisateur/email
+            password_path: password             # Chemin dans le JSON pour le mot de passe
+            success_handler: lexik_jwt_authentication.handler.authentication_success
+            failure_handler: lexik_jwt_authentication.handler.authentication_failureOf course. I can certainly integrate these changes for you. I will restructure the "Running the Application" section to be more streamlined and add a new section for Mailpit, all while maintaining the helpful and clear tone of your existing documentation.
 
 Here is the updated `README.md` file.
 
