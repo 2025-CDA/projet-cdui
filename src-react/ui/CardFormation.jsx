@@ -21,7 +21,7 @@ function CardFormation({
   if (isEmpty) {
   return (
         <Button
-          customClass= 'flex flex-col  border-gray-200 rounded-xl bg-background border shadow-2xs aspect-square cursor-pointer transition hover:shadow-lg'
+          className= 'flex flex-col  border-gray-200 rounded-xl bg-background border shadow-2xs aspect-square cursor-pointer transition hover:shadow-lg'
           // }}
           icon={
             // Icône SVG, taille et style pour centrer
@@ -38,7 +38,7 @@ function CardFormation({
 
   return (
     
-    <div className="w-sm">
+    <div className='w-full'>
       <div className="flex flex-col bg-background border border-gray-200 shadow-2xs rounded-xl">
         <img
           className="w-full h-18 rounded-t-xl"
@@ -64,7 +64,7 @@ function CardFormation({
               <CircleProgress statusPae="75%" className="mt-1"/>
           </div>
           <div className='w-24'>
-            <Button color='blue' varity='solid' style='h-12'>Consulter</Button>
+            <Button color='blue' variant='solid' className='h-12'>Consulter</Button>
           </div>
         </div>
       </div>
