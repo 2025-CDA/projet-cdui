@@ -32,6 +32,6 @@ final class MailerController extends AbstractController
 
         $mailer->send($email);
 
-        return new Response('Le mail a été envoyé, vous pouvez le consulter à :  http://localhost:8025');
+        return new Response('Email sent! Check Mailpit at  http://localhost:8025');
     }
 }
