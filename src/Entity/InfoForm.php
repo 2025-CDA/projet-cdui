@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Post(
             uriTemplate: '/api/info_forms/{id}/status_update',
-            routeName: 'company.publication',
-            name: 'publication',
+            routeName: 'info_form.status_update',
+            name: 'status_update',
 //            controller: CreateCompanyPublication::class
         )
     ],

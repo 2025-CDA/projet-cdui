@@ -34,38 +34,44 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ApiResource(
-//    operations: [
-//        new Post(
-//            uriTemplate: '/companies/{id}/publication',
-//            name: 'publication',
-////            controller: CreateBookPublication::class
-//        )
-//    ],
-    order: ['id' => 'ASC']
-)]
-#[Get(normalizationContext: ['groups' => ['read:user']])]
-#[GetCollection(
-    paginationItemsPerPage: 10,
-    paginationMaximumItemsPerPage: 10,
-    paginationClientItemsPerPage: true,
-    normalizationContext: ['groups' => ['read:user_collection']],
-//    forceEager: false,
-)]
-#[Post(
-    controller: CreateUserController::class,
-    denormalizationContext: ['groups' => ['create:user']],
+    operations: [
+        new Post(
+            controller: CreateUserController::class,
+            denormalizationContext: ['groups' => ['create:user']],
 //    read: false,
 //    write: false,
-
 //    processor: UserStateProcessor::class
-)]
-#[Patch(
-    controller: UpdateUserController::class,
-    denormalizationContext: ['groups' => ['update:user']],
+        ),
+        new GetCollection(
+            paginationItemsPerPage: 10,
+            paginationMaximumItemsPerPage: 10,
+            paginationClientItemsPerPage: true,
+            normalizationContext: ['groups' => ['read:user_collection']],
+//    forceEager: false,
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['read:user']]
+        ),
+        new Patch(
+            controller: UpdateUserController::class,
+            denormalizationContext: ['groups' => ['update:user']],
 //    write: false
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['update:user']]
+        ),
+        new Delete(),
+        new Get(
+            uriTemplate: '/me',
+//            normalizationContext: ['groups' => ['read:user']],
+            security: 'is_granted("ROLE_USER")',
+            name: 'api_me'
+        ),
+    ],
+    order: ['id' => 'ASC']
 )]
-#[Put(denormalizationContext: ['groups' => ['update:user']])]
-#[Delete]
+
+
 #[ApiFilter(
     SearchFilter::class,
     properties: [

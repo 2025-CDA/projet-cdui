@@ -11,4 +11,6 @@ api_platform:
 #        enabled: false
 #        force_eager: false
 #        fetch_partial: true
+    patch_formats:
+        json: ['application/merge-patch+json']
 
