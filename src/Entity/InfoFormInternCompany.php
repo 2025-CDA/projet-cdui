@@ -2,14 +2,27 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\InfoFormInternCompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: InfoFormInternCompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:info_form_intern_company']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:info_form_intern_company_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:info_form_intern_company']])]
+#[Patch(denormalizationContext: ['groups' => ['update:info_form_intern_company']])]
+#[Put(denormalizationContext: ['groups' => ['update:info_form_intern_company']])]
+#[Delete]
 class InfoFormInternCompany
 {
     #[ORM\PrePersist]
@@ -30,27 +43,69 @@ class InfoFormInternCompany
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection',
+        'create:info_form_intern_company',
+        'update:info_form_intern_company'
+    ])]
     private ?string $companyName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection',
+        'create:info_form_intern_company',
+        'update:info_form_intern_company'
+    ])]
     private ?string $address = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection',
+        'create:info_form_intern_company',
+        'update:info_form_intern_company'
+    ])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection',
+        'create:info_form_intern_company',
+        'update:info_form_intern_company'
+    ])]
     private ?string $contactName = null;
 
     #[ORM\OneToOne(mappedBy: 'infoFormInternCompany', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection',
+        'create:info_form_intern_company',
+        'update:info_form_intern_company'
+    ])]
     private ?InfoFormIntern $infoFormIntern = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection'
+    ])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:info_form_intern_company',
+        'read:info_form_intern_company_collection'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int

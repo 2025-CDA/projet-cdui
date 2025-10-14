@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
 import Label from "./ui/Label";
+import Alert from "./ui/Alerts";
+import Select from "./ui/Select";
+import Checkbox from "./ui/Checkbox";
+import Textarea from "./ui/TextArea";
+import Avatar from "./ui/Avatar";
+import Badge from "./ui/Badge";
+import Notification from "./ui/Notification";
+import CardFormation from "./ui/CardFormation"
 
 export default function App() {
-    const [data, setData] = useState([]);
+    const [showAlert, setShowAlert] = useState(true);
 
     useEffect(() => {
 
@@ -26,7 +34,7 @@ export default function App() {
 
     return (   
         <div>
-            <h1 className={"bg-amber-500"}>Test Array</h1>
+            {/* <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-primary"}>Test Array</h1>
             <h1 className={"bg-secondary"}>Test Array</h1>
             <h1 className={"bg-logo"}>Test Array</h1>
