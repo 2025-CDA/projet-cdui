@@ -7,11 +7,11 @@ import Checkbox from "./ui/Checkbox";
 import Textarea from "./ui/TextArea";
 import Avatar from "./ui/Avatar";
 import Badge from "./ui/Badge";
+import Notification from "./ui/Notification";
+import CardFormation from "./ui/CardFormation"
 
 export default function App() {
     const [showAlert, setShowAlert] = useState(true);
-
-    const [data, setData] = useState([]);
 
     useEffect(() => {
         // const fetchData = async () => {
@@ -29,6 +29,7 @@ export default function App() {
     }, []);
 
     return (
+        
         <div>
             {/* <h1 className={"bg-amber-500"}>Test Array</h1>
             <h1 className={"bg-primary"}>Test Array</h1>
