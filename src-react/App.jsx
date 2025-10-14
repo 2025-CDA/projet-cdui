@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
+import  Alert from "./ui/Alerts";
+import Notification from "./ui/Notification";
 import CardFormation from "./ui/CardFormation"
 
 
 
 export default function App() {
 
-    const [showAlert, setShowAlert] = useState(true);
+    
 
     const [data, setData] = useState([]);
 
@@ -29,32 +31,82 @@ export default function App() {
 
     return (
         
-        <div className="container flex justify-center mx-auto">
-            <div className="flex flex-col ">
-                <h1 className={"bg-amber-500"}>Test Array</h1>
-                <h1 className={"bg-primary"}>Test Array</h1>
-                <h1 className={"bg-secondary"}>Test Array</h1>
-                <h1 className={"bg-logo"}>Test Array</h1>
-                <h1 className={"bg-amber-500"}>Test Array</h1>
-                <h1 className={"bg-amber-500"}>Test Array</h1>
-                <ul>
-                    {data.map((item) => (
-                        <li key={item.id}>{item.name}</li>
-                    ))}
-                </ul>
+        <div>
+            <h1 className={"bg-amber-500"}>Test Array</h1>
+            <h1 className={"bg-primary"}>Test Array</h1>
+            <h1 className={"bg-secondary"}>Test Array</h1>
+            <h1 className={"bg-logo"}>Test Array</h1>
+            <h1 className={"bg-amber-500"}>Test Array</h1>
+            <h1 className={"bg-amber-500"}>Test Array</h1>
+            <ul>
+                {data.map((item) => (
+                    <li key={item.id}>{item.name}</li>
+                ))}
+            </ul>
 
-            <CardFormation trainingTitle="Nom de la formation" nbOffer="215015" trainerName= "Jérémie" startDateInternship= "00/00/0000" endDateInternship= "00/00/0000" percentageValidationPae= "20"/>
-            <CardFormation />
-            <br />
-            <hr />
-                    
-            <Button color="blue" varity="solide" >click me </Button>
-            <Button color="blue" varity="outline">click me </Button>
-
-            <br />
-            <hr />
-            <br />
+        <Button color={"blue"} varity={"solide"}>click me </Button>
+        <Button color={"blue"} varity={"outline"}>click me </Button>
+        <br/><br/><br/>
+        <div className="flex gap-10">
+            <div>
+                <Alert 
+                    type='error'
+                    title= 'successfully and successfully '
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='success'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='warning'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
+                <Alert 
+                    type='info'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."   
+                />
             </div>
+            <div>
+                <Notification
+                    type='uploadSuccess'
+                    title= 'upload successfully and successfully  '
+                    message="aaaaaaaaaaa." 
+                />
+
+                <Notification
+                    type='error'
+                    title= 'notification error'
+                    message="aaaaaaaaaaa."  
+                />
+                <Notification
+                    type='success'
+                    title= 'successfully and successfully  ' 
+                />
+                <Notification
+                    type='info'
+                    title= 'successfully and successfully  '
+                />
+
+                <Notification
+                    type='action'
+                    title= 'successfully and successfully  '
+                />
+            </div>
+        </div>
+
+
+
+
+            
+
+
+
+
+        
             
         </div>
     );
