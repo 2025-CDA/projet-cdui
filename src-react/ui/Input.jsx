@@ -29,7 +29,7 @@ export default function Input({
                             : type
                     }
                     id={id}
-                    className={`py-2.5 sm:py-3 px-4 block w-full border-1 border-gray-200  placeholder-gray-600 rounded-lg sm:text-sm focus:border-secondary focus:ring-secondary disabled:opacity-50  ${
+                    className={`py-2.5 sm:py-3 px-4 block w-full border-1 border-gray-200  placeholder-secondary-text rounded-lg sm:text-sm focus:border-secondary focus:ring-secondary disabled:opacity-50  ${
                         icon && "ps-11"
                     } ${withShowPassword && "pe-11"}`}
                     placeholder={placeholder}
@@ -45,12 +45,12 @@ export default function Input({
                     <div className="absolute inset-y-0 end-0 flex items-center pe-4 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                         {!showPassword ? (
                             <Eye
-                                className="text-gray-600 w-4"
+                                className="text-secondary-text w-4"
                                 onClick={() => setShowPassword(true)}
                             ></Eye>
                         ) : (
                             <EyeOff
-                                className="text-gray-600 w-4"
+                                className="text-secondary-text w-4"
                                 onClick={() => setShowPassword(false)}
                             ></EyeOff>
                         )}
@@ -60,7 +60,7 @@ export default function Input({
                     <div className="absolute inset-y-0 end-0 flex items-center pe-4 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                         {
                             <Copy
-                                className="text-gray-400 w-4"
+                                className="text-secondary-text w-4"
                                 onClick={() =>
                                     navigator.clipboard.writeText(value)
                                 }
