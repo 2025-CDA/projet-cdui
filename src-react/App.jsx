@@ -4,11 +4,14 @@ import Button from "./ui/Button";
 import CardFormation from "./ui/CardFormation"
 
 
+
 export default function App() {
+
+    const [showAlert, setShowAlert] = useState(true);
+
     const [data, setData] = useState([]);
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
                 // Await the response from the GET request
@@ -52,8 +55,6 @@ export default function App() {
             <hr />
             <br />
             </div>
-                
-        
             
         </div>
     );
