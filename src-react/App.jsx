@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "./ui/Button";
-import  Alert from "./ui/Alerts";
+import CardFormation from "./ui/CardFormation"
 
 
 
@@ -28,54 +28,34 @@ export default function App() {
     }, []);
 
     return (
-        <div>
-            <h1 className={"bg-amber-500"}>Test Array</h1>
-            <h1 className={"bg-primary"}>Test Array</h1>
-            <h1 className={"bg-secondary"}>Test Array</h1>
-            <h1 className={"bg-logo"}>Test Array</h1>
-            <h1 className={"bg-amber-500"}>Test Array</h1>
-            <h1 className={"bg-amber-500"}>Test Array</h1>
-            <ul>
-                {data.map((item) => (
-                    <li key={item.id}>{item.name}</li>
-                ))}
-            </ul>
+        
+        <div className="container flex justify-center mx-auto">
+            <div className="flex flex-col ">
+                <h1 className={"bg-amber-500"}>Test Array</h1>
+                <h1 className={"bg-primary"}>Test Array</h1>
+                <h1 className={"bg-secondary"}>Test Array</h1>
+                <h1 className={"bg-logo"}>Test Array</h1>
+                <h1 className={"bg-amber-500"}>Test Array</h1>
+                <h1 className={"bg-amber-500"}>Test Array</h1>
+                <ul>
+                    {data.map((item) => (
+                        <li key={item.id}>{item.name}</li>
+                    ))}
+                </ul>
 
-        <Button />
-        <Button color={"blue"} varity={"solide"}>click me </Button>
-        <Button color={"blue"} varity={"outline"}>click me </Button>
-        <br/><br/><br/>
+            <CardFormation trainingTitle="Nom de la formation" nbOffer="215015" trainerName= "Jérémie" startDateInternship= "00/00/0000" endDateInternship= "00/00/0000" percentageValidationPae= "20"/>
+            <CardFormation />
+            <br />
+            <hr />
+                    
+            <Button color="blue" varity="solide" >click me </Button>
+            <Button color="blue" varity="outline">click me </Button>
 
-        <Alert
-            type="error"
-            title="Ereeur Erreur "
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
-
-        <Alert
-            type="warning"
-            title="warning warning"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
-
-        <Alert
-            type="success"
-            title="success success"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
-        <Alert
-            type="info"
-            title="info info"
-            message="aaaaaaaaaaa."
-            show={showAlert}
-            onClose={() => setShowAlert(true)}
-        />
+            <br />
+            <hr />
+            <br />
+            </div>
+            
         </div>
     );
 }
