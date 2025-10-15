@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class StatusController extends AbstractController
 {
+    #region status form general
     #[Route('/status/{id}', name: 'app_status_form')]
     public function showStatusForm(int $id, InfoFormRepository $infoFormRepository): Response
     {
@@ -22,8 +23,10 @@ final class StatusController extends AbstractController
 
         dd($statusData);
     }
+    #endregion
 
-    #[Route('/status/company/{id}', name: 'app_status_form_company')]
+    #region status form company
+    #[Route('/status/company/{id}', name: 'app_status_company_form')]
     public function showStatusCompanyForm(int $id, InfoFormCompanyRepository $infoFormCompanyRepository): Response
     {
         $statusCompanyForm = $infoFormCompanyRepository->find($id);
@@ -32,20 +35,31 @@ final class StatusController extends AbstractController
 
         dd($statusCompanyData);
     }
+    #endregion
 
+    #region status form intern
      #[Route('/status/intern/{id}', name: 'app_status_intern_form')]
     public function showInternStatusForm(int $id, InfoFormInternRepository $infoFormInternRepository): Response
     {
         $statusInternForm = $infoFormInternRepository->find($id);
-        $statusData = $statusInternForm -> getStatus();
+        $statusInternData = $statusInternForm -> getStatus();
+        return $this->json($statusInternData);
 
+        dd($statusInternData);
+
+    }
+    #endregion
+
+
+    #region status form organization
         #[Route('/status/organization/{id}', name: 'app_statu_organizations_form')]
     public function showStatusOrganizationForm(int $id, InfoFormOrganizationRepository $infoFormOrganizationRepository): Response
     {
-        $statusForm = $infoFormOrganizationRepository->find($id);
-        $statusData = $statusForm -> getStatus();
-        return $this->json($statusData);
+        $statusOrganizationForm = $infoFormOrganizationRepository->find($id);
+        $statusOrganizationData = $statusOrganizationForm -> getStatus();
+        return $this->json($statusOrganizationData);
 
-        dd($statusData);
+        dd($statusOrganizationData);
     }
+    #endregion
 }
