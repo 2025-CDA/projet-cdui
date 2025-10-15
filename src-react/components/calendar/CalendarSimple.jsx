@@ -65,9 +65,7 @@ function getCalendarRows(month, year) {
 
 function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
 
-    shrinkable && {};
-
-
+    const [opened, setOpened] = useState(!shrinkable);
     // Immutable Date, convertir en JS Date
     const startDate = periodStart && periodStart.toDate ? periodStart.toDate() : periodStart;
     const endDate = periodEnd && periodEnd.toDate ? periodEnd.toDate() : periodEnd;
@@ -113,8 +111,11 @@ function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
     const handleYearChange = (e) => setYear(Number(e.target.value));
 
     // Fonction utilitaire pour savoir si une date est dans la période de stage
+
     function isInInternshipPeriod(date) {
-        if (!startDate || !endDate) return false;
+        if (!startDate || !endDate) {
+            return false;
+        }
         // On ignore l'heure
         const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         const s = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
@@ -140,37 +141,53 @@ function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
 
     return (
         <div>
-            <div className="w-80 pl-2 pr-2 mb-3 flex flex-col bg-white border border-gray-200  rounded-xl overflow-hidden">
-                {/* Affichage du J- / J+ */}
-                {jValue && (
-                    <div className="mt-2 pb-5 text-center text-sm font-bold text-primary-text">
-                        {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
-                        <div className=''>
-                            {/* ------------------------------------------ régler le style de calendar et date du jour -------------------------------------- */}
-                            <Calendar width={16}/>
-                            {`${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getFullYear()}`}
-                        </div>
-                        {/* Affichage de la période PAE */}
-                        {startDate && endDate && (
-                            <div className="pb-3 text-center text-xs font-normal text-primary-text">
-                                Période PAE du :{" "}
-                                {`${startDate.getDate().toString().padStart(2, "0")}/${(startDate.getMonth() + 1).toString().padStart(2, "0")}/${startDate.getFullYear()}`}
-                                {" "}au{" "}
-                                {`${endDate.getDate().toString().padStart(2, "0")}/${(endDate.getMonth() + 1).toString().padStart(2, "0")}/${endDate.getFullYear()}`}
+            {shrinkable && (
+                <div className={`w-80 pl-2 pr-2 mb-3 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden`}>
+                    {/* Affichage du J- / J+ */}
+                    {jValue && (
+                        <div className="mt-2 pb-5 text-center text-s font-bold text-primary-text">
+                            {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
+                            <div className='py-1 flex items-center gap-1 justify-center text-xs '>
+                                {/* ------------------------------------------ régler le style de calendar et date du jour -------------------------------------- */}
+                                <Calendar width={12}/>
+                                {`${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getFullYear()}`}
                             </div>
-                        )}
-                        {/* Période PAE du : {periodStart} au {periodEnd} */}
-                        {shrinkable && (<Button icon={<ChevronDown />}></Button>)}
-                        {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
-                    </div>
-                )}
-            </div>
-            <div className="w-80 pl-2 pr-2 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            {/* Affichage de la période PAE */}
+                            {startDate && endDate && (
+                                <div className="pb-3 text-center text-xs font-normal text-primary-text">
+                                    Période PAE du :{" "}
+                                    {`${startDate.getDate().toString().padStart(2, "0")}/${(startDate.getMonth() + 1).toString().padStart(2, "0")}/${startDate.getFullYear()}`}
+                                    {" "}au{" "}
+                                    {`${endDate.getDate().toString().padStart(2, "0")}/${(endDate.getMonth() + 1).toString().padStart(2, "0")}/${endDate.getFullYear()}`}
+                                </div>
+                            )}
+                            {/* Période PAE du : {periodStart} au {periodEnd} */}
+                            {shrinkable && (
+                                <Button
+                                    width={7}
+                                    height={7}
+                                    onClick={() => setOpened(o => !o)}
+                                    icon={<ChevronDown />}
+                                />
+                            )}
+                            {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
+                        </div>
+                    )}
+                </div>
+            )}
+            <div className={`w-80 pl-2 pr-2 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden${opened ? '' : ' hidden'}`}>
                 {/* Affichage du J- / J+ */}
                 {jValue && (
-                    <div className="mt-2 pb-5 text-center text-sm font-bold text-primary-text">
+                    <div className="mt-2 pb-5 text-center text-s font-bold text-primary-text">
                         {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
-                        {shrinkable && (<Button icon={<ChevronUp />}></Button>)}
+                        {shrinkable && (
+                            <Button
+                                width={7}
+                                height={7}
+                                onClick={() => setOpened(o => !o)}
+                                icon={<ChevronUp />}
+                            />
+                        )}
                         {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
                     </div>
                 )}
@@ -257,12 +274,21 @@ function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
 
                                     // Classes pour arrondir le fond logo
                                     let logoBgClass = "absolute z-0 w-10 h-10 bg-logo";
-                                    if (inPeriod && !isStart && !isEnd) {
-                                        if (isFirstOfWeek) logoBgClass += " rounded-l-full";
-                                        if (isLastOfWeek) logoBgClass += " rounded-r-full";
+                                    // N'afficher le bg-logo que si le jour est dans la période ET dans le mois courant
+                                    if (inPeriod && currentMonth && !isStart && !isEnd) {
+                                        if (isFirstOfWeek) {
+                                            logoBgClass += " rounded-l-full";
+                                        }
+                                        if (isLastOfWeek) {
+                                            logoBgClass += " rounded-r-full";
+                                        }
                                     }
-                                    if (isStart) logoBgClass += " rounded-l-full";
-                                    if (isEnd) logoBgClass += " rounded-r-full";
+                                    if (isStart && currentMonth) {
+                                        logoBgClass += " rounded-l-full";
+                                    }
+                                    if (isEnd && currentMonth) {
+                                        logoBgClass += " rounded-r-full";
+                                    }
 
                                     // Classes pour le bouton principal
                                     let btnClass = `size-10 flex justify-center items-center border-2 border-none text-xs rounded-full z-10
@@ -272,12 +298,16 @@ function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
                                         ${isEnd ? "bg-primary text-white" : ""}
                                         ${isToday ? "border-3 border-primary border-solid" : ""}
                                     `;
-                                    if (isStart && isFirstOfWeek) btnClass += " rounded-l-full";
-                                    if (isEnd && isLastOfWeek) btnClass += " rounded-r-full";
+                                    if (isStart && isFirstOfWeek) {
+                                        btnClass += " rounded-l-full";
+                                    }
+                                    if (isEnd && isLastOfWeek) {
+                                        btnClass += " rounded-r-full";
+                                    }
 
                                     return (
                                         <div key={key} className="relative flex justify-center items-center">
-                                            {inPeriod && (
+                                            {inPeriod && currentMonth && (
                                                 <div className={logoBgClass} />
                                             )}
                                             <button
