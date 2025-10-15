@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import MobileNavbar from "./components/layout/MobileNavbar";
 import Label from "./ui/Label";
+import { LogIn } from "lucide-react";
 
 export default function App() {
     const [showAlert, setShowAlert] = useState(true);
@@ -22,6 +22,5 @@ export default function App() {
     }, []);
 
     // console.log(data[0])
-
     return <div></div>;
 }
