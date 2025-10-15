@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\InfoFormIntern;
 use App\Repository\InfoFormInternRepository;
+use App\Repository\InfoFormOrganizationRepository;
 use App\Repository\InfoFormRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,12 @@ final class StatusController extends AbstractController
     {
         $statusInternForm = $infoFormInternRepository->find($id);
         $statusData = $statusInternForm -> getStatus();
+
+        #[Route('/status/organization/{id}', name: 'app_statu_organizations_form')]
+    public function showStatusOrganizationForm(int $id, InfoFormOrganizationRepository $infoFormOrganizationRepository): Response
+    {
+        $statusForm = $infoFormOrganizationRepository->find($id);
+        $statusData = $statusForm -> getStatus();
         return $this->json($statusData);
 
         dd($statusData);
