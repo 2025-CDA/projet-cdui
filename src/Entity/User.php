@@ -40,20 +40,20 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
     paginationMaximumItemsPerPage: 10,
     paginationClientItemsPerPage: true,
     normalizationContext: ['groups' => ['read:user_collection']],
-//    forceEager: false,
+    //    forceEager: false,
 )]
 #[Post(
     controller: CreateUserController::class,
     denormalizationContext: ['groups' => ['create:user']],
-//    read: false,
-//    write: false,
+    //    read: false,
+    //    write: false,
 
-//    processor: UserStateProcessor::class
+    //    processor: UserStateProcessor::class
 )]
 #[Patch(
     controller: UpdateUserController::class,
     denormalizationContext: ['groups' => ['update:user']],
-//    write: false
+    //    write: false
 )]
 #[Put(denormalizationContext: ['groups' => ['update:user']])]
 #[Delete]
@@ -175,7 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?string $login = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: CompanyMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
@@ -185,7 +185,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?CompanyMember $companyMember = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: OrganizationMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
@@ -195,7 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?OrganizationMember $organizationMember = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: InternMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
