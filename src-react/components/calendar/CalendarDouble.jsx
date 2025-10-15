@@ -231,7 +231,7 @@ function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }
     // --------------------------
     // Rendu principal du composant
     // --------------------------
-        return (
+    return (
         <div className="space-y-4 p-3 bg-white border border-gray-200 ">
             {/* Navigation mois/année */}
             <div className="flex items-center justify-between px-2">
