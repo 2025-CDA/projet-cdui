@@ -2,38 +2,109 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\OrganizationRole;
 use App\Repository\OrganizationMemberRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: OrganizationMemberRepository::class)]
-#[ApiResource]
-
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:organization_member']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:organization_member_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:organization_member']])]
+#[Patch(denormalizationContext: ['groups' => ['update:organization_member']])]
+#[Put(denormalizationContext: ['groups' => ['update:organization_member']])]
+#[Delete]
 class OrganizationMember
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: OrganizationRole::class)]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection',
+        'create:organization_member',
+        'update:organization_member'
+    ])]
     private ?OrganizationRole $role = null;
 
-    #[ORM\OneToOne(mappedBy: 'organizationMember', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'organizationMember', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection',
+        'create:organization_member',
+        'update:organization_member'
+    ])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'organizationMembers')]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection',
+        'create:organization_member',
+        'update:organization_member'
+    ])]
     private ?Organization $organization = null;
 
     /**
      * @var Collection<int, TrainingSession>
      */
     #[ORM\ManyToMany(targetEntity: TrainingSession::class, inversedBy: 'organizationMembers')]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection',
+        'create:organization_member',
+        'update:organization_member'
+    ])]
     private Collection $trainingSession;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups([
+        'read:organization_member',
+        'read:organization_member_collection'
+    ])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct()
     {
@@ -111,6 +182,30 @@ class OrganizationMember
     public function removeTrainingSession(TrainingSession $trainingSession): static
     {
         $this->trainingSession->removeElement($trainingSession);
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

@@ -2,31 +2,102 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Enum\CompanyRole;
 use App\Repository\CompanyMemberRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 
 #[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
-#[ApiResource]
-
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
+#[Get(normalizationContext: ['groups' => ['read:company_member']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:company_member_collection']])]
+#[Post(denormalizationContext: ['groups' => ['create:company_member']])]
+#[Patch(denormalizationContext: ['groups' => ['update:company_member']])]
+#[Put(denormalizationContext: ['groups' => ['update:company_member']])]
+#[Delete]
 class CompanyMember
 {
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        // Set the createdAt and updatedAt values on initial creation
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        // Set the updatedAt value on every update
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true, enumType: CompanyRole::class)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?CompanyRole $role = null;
 
-    #[ORM\OneToOne(mappedBy: 'companyMember', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'companyMember', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'companyMembers')]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection',
+        'create:company_member',
+        'update:company_member'
+    ])]
     private ?Company $company = null;
+
+    #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[MaxDepth(1)]
+    #[Groups([
+        'read:company_member',
+        'read:company_member_collection'
+    ])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -75,6 +146,30 @@ class CompanyMember
     public function setCompany(?Company $company): static
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
