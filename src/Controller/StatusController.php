@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\InfoFormCompanyRepository;
 use App\Entity\InfoFormIntern;
 use App\Repository\InfoFormInternRepository;
 use App\Repository\InfoFormOrganizationRepository;
@@ -22,6 +23,16 @@ final class StatusController extends AbstractController
         dd($statusData);
     }
 
+    #[Route('/status/company/{id}', name: 'app_status_form_company')]
+    public function showStatusCompanyForm(int $id, InfoFormCompanyRepository $infoFormCompanyRepository): Response
+    {
+        $statusCompanyForm = $infoFormCompanyRepository->find($id);
+        $statusCompanyData = $statusCompanyForm -> getStatus();
+        return $this->json($statusCompanyData);
+
+        dd($statusCompanyData);
+    }
+
      #[Route('/status/intern/{id}', name: 'app_status_intern_form')]
     public function showInternStatusForm(int $id, InfoFormInternRepository $infoFormInternRepository): Response
     {
@@ -37,5 +48,4 @@ final class StatusController extends AbstractController
 
         dd($statusData);
     }
-
 }
