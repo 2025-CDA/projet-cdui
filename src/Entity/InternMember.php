@@ -53,7 +53,8 @@ class InternMember
     ])]
     private ?int $id = null;
 
-    #[ORM\OneToOne(mappedBy: 'internMember', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'internMember', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
     #[MaxDepth(1)]
     #[Groups([
         'read:intern_member',
