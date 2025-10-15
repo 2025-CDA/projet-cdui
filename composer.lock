@@ -4,14 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-
-    
-    //maxime branch:
-    //"content-hash": "c8bf8cb8b9c1d33be3b490d8453b5b99",
-
-    // dev branch : 
-    //"content-hash": "1bf5a5e0982f2ab8f65735ae41897777",
-
+    "content-hash": "c8bf8cb8b9c1d33be3b490d8453b5b99",
     "packages": [
         {
             "name": "api-platform/doctrine-common",
