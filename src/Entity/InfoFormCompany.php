@@ -251,6 +251,9 @@ class InfoFormCompany
     ])]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $status = null;
+
     #[Groups([
         'read:info_form_company',
         'read:info_form_company_collection'
@@ -583,6 +586,18 @@ class InfoFormCompany
     public function setCreatedAt(?\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

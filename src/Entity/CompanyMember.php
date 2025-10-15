@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CompanyMemberRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(order: ['createdAt' => 'DESC'] )]
+#[ApiResource(order: ['createdAt' => 'DESC'])]
 #[Get(normalizationContext: ['groups' => ['read:company_member']])]
 #[GetCollection(normalizationContext: ['groups' => ['read:company_member_collection']])]
 #[Post(denormalizationContext: ['groups' => ['create:company_member']])]
@@ -62,7 +62,8 @@ class CompanyMember
     ])]
     private ?CompanyRole $role = null;
 
-    #[ORM\OneToOne(mappedBy: 'companyMember', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'companyMember', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
     #[MaxDepth(1)]
     #[Groups([
         'read:company_member',

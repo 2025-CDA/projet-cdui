@@ -61,7 +61,8 @@ class OrganizationMember
     ])]
     private ?OrganizationRole $role = null;
 
-    #[ORM\OneToOne(mappedBy: 'organizationMember', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'organizationMember', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups([
         'read:organization_member',
         'read:organization_member_collection',
