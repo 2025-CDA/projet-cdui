@@ -5,8 +5,8 @@ namespace App\Enum;
 enum UserRole: string
 {
     case INTERN = 'Stagiaire';
-    case COMPANY = 'Entreprise';
-    case ORGANIZATION = 'Organisme de formation';
+    case ORGANIZATION = "Membre d'une organisation";
+    case COMPANY = "Membre d'une entreprise";
 
     public function toString(): string
     {
