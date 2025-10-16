@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Label from "./ui/Label";
-import { LogIn } from "lucide-react";
 
 export default function App() {
     const [showAlert, setShowAlert] = useState(true);
