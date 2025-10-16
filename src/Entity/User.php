@@ -33,30 +33,37 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource(order: ['id' => 'ASC'])]
-#[Get(normalizationContext: ['groups' => ['read:user']])]
-#[GetCollection(
-    paginationItemsPerPage: 10,
-    paginationMaximumItemsPerPage: 10,
-    paginationClientItemsPerPage: true,
-    normalizationContext: ['groups' => ['read:user_collection']],
-    //    forceEager: false,
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['read:user']]
+        ),
+        new GetCollection(
+            paginationItemsPerPage: 10,
+            paginationMaximumItemsPerPage: 10,
+            paginationClientItemsPerPage: true,
+            normalizationContext: ['groups' => ['read:user_collection']]
+        ),
+        new Post(
+            controller: CreateUserController::class,
+            denormalizationContext: ['groups' => ['create:user']],
+        // When using a custom controller that handles persistence,
+        // you should disable API Platform's default writer.
+            write: false
+        ),
+        new Patch(
+            controller: UpdateUserController::class,
+            denormalizationContext: ['groups' => ['update:user']],
+        // Also disable the writer here for the same reason.
+            write: false
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['update:user']]
+        ),
+        new Delete()
+    ],
+    order: ['id' => 'ASC']
 )]
-#[Post(
-    controller: CreateUserController::class,
-    denormalizationContext: ['groups' => ['create:user']],
-    //    read: false,
-    //    write: false,
-
-    //    processor: UserStateProcessor::class
-)]
-#[Patch(
-    controller: UpdateUserController::class,
-    denormalizationContext: ['groups' => ['update:user']],
-    //    write: false
-)]
-#[Put(denormalizationContext: ['groups' => ['update:user']])]
-#[Delete]
 #[ApiFilter(
     SearchFilter::class,
     properties: [
