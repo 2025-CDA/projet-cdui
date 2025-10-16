@@ -166,6 +166,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName . ' ' . $this->firstName;
     }
 
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
         'read:user',
