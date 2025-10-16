@@ -20,8 +20,9 @@ function CardFormation({
 
   if (isEmpty) {
   return (
-        <Button
-          className= 'flex flex-col  border-gray-200 rounded-xl bg-background border shadow-2xs aspect-square cursor-pointer transition hover:shadow-lg'
+        <a href='/'><Button
+          className= 'flex flex-col  border-gray-200 rounded-x border shadow-2xs aspect-square cursor-pointer transition hover:shadow-lg'
+          color='white'
           // }}
           icon={
             // Icône SVG, taille et style pour centrer
@@ -31,7 +32,7 @@ function CardFormation({
           }
         >
           <span className="block mt-2 text-lg text-secondary-text font-semibold">Ajouter une formation</span>
-        </Button>
+        </Button></a>
   );
 }
 

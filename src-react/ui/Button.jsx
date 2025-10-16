@@ -1,5 +1,5 @@
 export default function Button({
-    variant,
+    variant = 'solid',
     icon,
     color = "blue",
     children,
@@ -11,7 +11,7 @@ export default function Button({
     // Définition des variantes et des couleurs
     const colorVariants = {
         blue: {
-            solid: "bg-blue-600 text-white hover:bg-blue-700",
+            solid: "bg-primary text-white hover:bg-blue-700",
             outline:
                 "border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white",
         },
@@ -26,9 +26,9 @@ export default function Button({
                 "border border-green-600 text-green-600 hover:bg-green-600 hover:text-white",
         },
         white: {
-            solid: "bg-background text-primary-text hover:bg-primary",
+            solid: "bg-background text-primary-text",
             outline:
-                "border border-black-600 text-primary-text hover:bg-primary",
+                "border border-black-600 text-primary-text",
         },
     };
 
@@ -39,7 +39,7 @@ export default function Button({
         circle: "rounded-full p-2", // pour icônes
     };
     const baseButton =
-        "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition duration-200 focus:outline-none w-full bg-primary p-2 text-white";
+        "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition duration-200 focus:outline-none w-full p-2 text-white";
 
     const colorVariantClass =
         colorVariants[color] && colorVariants[color][variant]

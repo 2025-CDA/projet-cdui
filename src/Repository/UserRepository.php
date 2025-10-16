@@ -19,7 +19,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         parent::__construct($registry, User::class);
     }
-    
+
     /**
      * Cette méthode sera utilisée par Symfony pour charger l'utilisateur
      * soit par email, soit par login lors de l'authentification.
