@@ -19,6 +19,7 @@ use ApiPlatform\Metadata\Put;
 use App\Controller\User\CreateUserController;
 use App\Controller\User\UpdateUserController;
 use App\Repository\UserRepository;
+use App\Enum\UserRole;
 
 //use App\State\UserStateProcessor;
 use Doctrine\ORM\Mapping as ORM;
