@@ -63,8 +63,11 @@ function getCalendarRows(month, year) {
     return weeks;
 }
 
-function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
+function CalendarSimple({ periodStart = null, periodEnd = null, shrinkable = false }) {
 
+    if (!periodStart && !periodEnd) {
+        shrinkable = false;
+    }
     const [opened, setOpened] = useState(!shrinkable);
     // Immutable Date, convertir en JS Date
     const startDate = periodStart && periodStart.toDate ? periodStart.toDate() : periodStart;
@@ -178,17 +181,24 @@ function CalendarSimple({ periodStart, periodEnd, shrinkable = false }) {
             <div className={`w-80 pl-2 pr-2 flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden${opened ? '' : ' hidden'}`}>
                 {/* Affichage du J- / J+ */}
                 {jValue && (
-                    <div className="mt-2 pb-5 text-center text-s font-bold text-primary-text">
-                        {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
+                    <div className="mt-2 pb-5 text-center font-bold text-primary-text">
+                        {!shrinkable &&
+                            <>
+                                <p className='text-3xl ' >{jValue}</p>
+                                <p className='text-s ' >{jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}</p>
+                            </>
+                        }
                         {shrinkable && (
-                            <Button
-                                width={7}
-                                height={7}
-                                onClick={() => setOpened(o => !o)}
-                                icon={<ChevronUp />}
-                            />
+                            <>
+                                <Button
+                                    width={7}
+                                    height={7}
+                                    onClick={() => setOpened(o => !o)}
+                                    icon={<ChevronUp />}
+                                />
+                                {jValue} {jValue.startsWith("J - ") ? "avant le début de stage" : "depuis le début de stage"}
+                            </>
                         )}
-                        {/* -------------------------------------- A fixer qd Button prêt ---------------------------------------------- */}
                     </div>
                 )}
                 <div className=" flex flex-col bg-white border border-gray-200 shadow-lg rounded-xl overflow-hidden">

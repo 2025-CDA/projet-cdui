@@ -1,12 +1,18 @@
-<CalendarSimple
+<CalendarSimpleGET
     periodStart={new Date(2025, 9, 10)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
     periodEnd={new Date(2025, 11, 25)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
     shrinkable={true}
+/>
+<CalendarSimplePUT
+    periodStart={new Date(2025, 9, 10)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
+    periodEnd={new Date(2025, 11, 25)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
+    multi={true}
 />
 <CalendarDouble
     periodStart={new Date(2025, 9, 10)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
     periodEnd={new Date(2025, 11, 25)} // ATTENTION EN JAVASCRIPT, IL FAUT SUCRER UN MOIS ICI
 />
 
-import CalendarSimple from "./components/calendar/calendarSimple";
+import CalendarSimpleGET from "./components/calendar/calendarSimpleGET";
+import CalendarSimplePUT from "./components/calendar/calendarSimplePUT";
 import CalendarDouble from "./components/calendar/CalendarDouble";

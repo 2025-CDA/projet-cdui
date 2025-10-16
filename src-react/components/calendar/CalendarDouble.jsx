@@ -109,20 +109,26 @@ function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }
     // Navigation mois précédent/suivant
     // --------------------------
     const handlePrev = () => {
-        if (month === 0) {
+        if (month === 0 ) {
+            setMonth(10);
+            setYear(year - 1);
+        } else if (month === 1 ) {
             setMonth(11);
             setYear(year - 1);
         } else {
-            setMonth(month - 1);
+            setMonth(month - 2);
         }
     };
 
     const handleNext = () => {
         if (month === 11) {
+            setMonth(1);
+            setYear(year + 1);
+        } else if (month === 10) {
             setMonth(0);
             setYear(year + 1);
         } else {
-            setMonth(month + 1);
+            setMonth(month + 2);
         }
     };
 
