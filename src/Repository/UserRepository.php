@@ -13,25 +13,27 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface,  UserLoaderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+//class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface,  UserLoaderInterface
+
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
     }
 
-    /**
-     * Cette méthode sera utilisée par Symfony pour charger l'utilisateur
-     * soit par email, soit par login lors de l'authentification.
-     */
-    public function loadUserByIdentifier(string $identifier): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->where('u.email = :identifier OR u.login = :identifier')
-            ->setParameter('identifier', $identifier)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
+//    /**
+//     * Cette méthode sera utilisée par Symfony pour charger l'utilisateur
+//     * soit par email, soit par login lors de l'authentification.
+//     */
+//    public function loadUserByIdentifier(string $identifier): ?User
+//    {
+//        return $this->createQueryBuilder('u')
+//            ->where('u.email = :identifier OR u.login = :identifier')
+//            ->setParameter('identifier', $identifier)
+//            ->getQuery()
+//            ->getOneOrNullResult();
+//    }
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
