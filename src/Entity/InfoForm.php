@@ -17,13 +17,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(order: ['createdAt' => 'DESC'])]
-#[Get(normalizationContext: ['groups' => ['read:info_form']])]
-#[GetCollection(normalizationContext: ['groups' => ['read:info_form_collection']])]
-#[Post(denormalizationContext: ['groups' => ['create:info_form']])]
-#[Patch(denormalizationContext: ['groups' => ['update:info_form']])]
-#[Put(denormalizationContext: ['groups' => ['update:info_form']])]
-#[Delete]
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['read:info_form']]
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['read:info_form_collection']]
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['create:info_form']]
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['update:info_form']]
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['update:info_form']]
+        ),
+        new Delete()
+    ],
+    order: ['createdAt' => 'DESC']
+)]
 class InfoForm
 {
     #[ORM\PrePersist]

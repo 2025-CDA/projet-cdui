@@ -20,13 +20,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InfoFormInternRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(order: ['createdAt' => 'DESC'])]
-#[Get(normalizationContext: ['groups' => ['read:info_form_intern']])]
-#[GetCollection(normalizationContext: ['groups' => ['read:info_form_intern_collection']])]
-#[Post(denormalizationContext: ['groups' => ['create:info_form_intern']])]
-#[Patch(denormalizationContext: ['groups' => ['update:info_form_intern']])]
-#[Put(denormalizationContext: ['groups' => ['update:info_form_intern']])]
-#[Delete]
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['read:info_form_intern']]
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['read:info_form_intern_collection']]
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['create:info_form_intern']]
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['update:info_form_intern']]
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['update:info_form_intern']]
+        ),
+        new Delete()
+    ],
+    order: ['createdAt' => 'DESC']
+)]
 class InfoFormIntern
 {
     #[ORM\PrePersist]
@@ -111,6 +125,9 @@ class InfoFormIntern
         'read:info_form_intern_collection'
     ])]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $status = null;
 
     #[Groups([
         'read:info_form_intern',
@@ -287,5 +304,22 @@ class InfoFormIntern
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatusLabels(): ?string
+    {
+        return $this->status;
     }
 }

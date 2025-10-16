@@ -20,9 +20,9 @@ const Alerts = ({
 
   // ----------------------- Style adapté selon le type d'alerte (exemple simple, CSS/Tailwind) ---------------------------
   const typeClasses = {
-    error: "bg-red-100 border-s-4 border-red-500 rounded-lg p-4  text-red-800",
-    success: "bg-teal-50 border-t-4 border-teal-500 rounded-lg p-4 text-teal-800 ",
-    warning: "bg-yellow-100 border border-yellow-200 rounded-lg p-4 text-yellow-800  ",
+    error: "bg-red-100 border-s-3 border-red-500 rounded-lg p-4  text-red-800",
+    success: "bg-teal-50 border-t-3 border-teal-500 rounded-lg p-4 text-teal-800 ",
+    warning: "bg-yellow-100 border border-yellow-200 rounded-lg p-4 text-yellow-800 ",
     info: "bg-gray-50  border border-gray-200 rounded-lg shadow-lg p-4  text-gray-500 "
   };
  // ----------------------- return ---------------------------

@@ -33,30 +33,37 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource(order: ['id' => 'ASC'])]
-#[Get(normalizationContext: ['groups' => ['read:user']])]
-#[GetCollection(
-    paginationItemsPerPage: 10,
-    paginationMaximumItemsPerPage: 10,
-    paginationClientItemsPerPage: true,
-    normalizationContext: ['groups' => ['read:user_collection']],
-//    forceEager: false,
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['read:user']]
+        ),
+        new GetCollection(
+            paginationItemsPerPage: 10,
+            paginationMaximumItemsPerPage: 10,
+            paginationClientItemsPerPage: true,
+            normalizationContext: ['groups' => ['read:user_collection']]
+        ),
+        new Post(
+            controller: CreateUserController::class,
+            denormalizationContext: ['groups' => ['create:user']],
+        // When using a custom controller that handles persistence,
+        // you should disable API Platform's default writer.
+            write: false
+        ),
+        new Patch(
+            controller: UpdateUserController::class,
+            denormalizationContext: ['groups' => ['update:user']],
+        // Also disable the writer here for the same reason.
+            write: false
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['update:user']]
+        ),
+        new Delete()
+    ],
+    order: ['id' => 'ASC']
 )]
-#[Post(
-    controller: CreateUserController::class,
-    denormalizationContext: ['groups' => ['create:user']],
-//    read: false,
-//    write: false,
-
-//    processor: UserStateProcessor::class
-)]
-#[Patch(
-    controller: UpdateUserController::class,
-    denormalizationContext: ['groups' => ['update:user']],
-//    write: false
-)]
-#[Put(denormalizationContext: ['groups' => ['update:user']])]
-#[Delete]
 #[ApiFilter(
     SearchFilter::class,
     properties: [
@@ -166,6 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName . ' ' . $this->firstName;
     }
 
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
         'read:user',
@@ -175,7 +183,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?string $login = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: CompanyMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
@@ -185,7 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?CompanyMember $companyMember = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: OrganizationMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
@@ -195,7 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?OrganizationMember $organizationMember = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: InternMember::class)]
     #[MaxDepth(1)]
     #[Groups([
         'read:user',
