@@ -32,6 +32,8 @@ final class JWTCreatedListener
             return;
         }
 
+        unset($payload['username']);
+
         // 3. ADD data to the payload
         // For example, add the user's ID and full name.
         $payload['id'] = $user->getId();
