@@ -3,21 +3,21 @@ import Label from "./Label"
 import Button from "./Button"
 import Input from "./Input"
 import { LogIn , Mail, LockKeyhole, MoveRight } from "lucide-react";
-import CheckBox from "./CheckBox";
+import CheckBox from "./Checkbox";
 
 
 function LoginForm({
     initialStep = 'login',
-         
+
 
 }) {
-    
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
     const [provisionalPassword, setProvisionalPassword] = useState('');
     const [step, setStep] = useState(initialStep); // 'login' | 'error' | 'firstConnect' | 'forgotPassword'
-    const [errorMsg, setErrorMsg] = useState(''); 
+    const [errorMsg, setErrorMsg] = useState('');
 
 
  // useEffect(() => { setStep(initialStep); }, [initialStep]);
@@ -38,7 +38,7 @@ function LoginForm({
   };
 
   // Handlers pour chaque étape
-  
+
   return (
     <div className="gap-y-5 p-10" >
       {step === 'login' || step === 'error' ? (
@@ -77,7 +77,7 @@ function LoginForm({
                     className={step === 'error' ? 'bg-[#ff5f5740] border-2 border-red-400 outline-red-400 placeholder-red-400 font-semibold  text-red-400' : ''}
                 />
             </div>
-          
+
             {step === 'error' && (
                 <p className="text-red-400 text-sm mt-2 whitespace-pre-line font-semibold">
                     {errorMsg || 'Votre adresse email et/ou mot de passe sont incorrectes. \nVeuillez vérifier vos informations.'}
