@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Calendar.css';
 import Button from '../../ui/Button';
 import { ChevronUp, Calendar, ChevronDown} from 'lucide-react';
@@ -62,12 +62,42 @@ function getCalendarRows(month, year) {
     return weeks;
 }
 
-function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null }) {
+function CalendarSimplePUT({ multi = null, single = null, onSaveSingle = null, onSaveMulti = null }) {
+    // Détection du mode
+    const isMulti = Array.isArray(multi) && multi.length > 0;
+    const isSingle = !!single && !isMulti;
 
-    // if multi alors récupération de la liste des formations à proposer.
-    const [selectedFormation, setSelectedFormation] = useState(multi ? multi[0] : null);
-    const startDate = multi && selectedFormation ? selectedFormation.periodStart : (periodStart && periodStart.toDate ? periodStart.toDate() : periodStart);
-    const endDate = multi && selectedFormation ? selectedFormation.periodEnd : (periodEnd && periodEnd.toDate ? periodEnd.toDate() : periodEnd);
+    // State pour la formation sélectionnée (multi) ou single
+    const [selectedFormation, setSelectedFormation] = useState(isMulti ? multi[0] : (isSingle ? single : null));
+    const [localStartDate, setLocalStartDate] = useState(
+        isMulti
+            ? multi[0]?.periodStart
+            : isSingle
+                ? single.periodStart
+                : null
+    );
+    const [localEndDate, setLocalEndDate] = useState(
+        isMulti
+            ? multi[0]?.periodEnd
+            : isSingle
+                ? single.periodEnd
+                : null
+    );
+
+    // Synchroniser les dates quand on change de formation (multi)
+    useEffect(() => {
+        if (isMulti && selectedFormation) {
+            setLocalStartDate(selectedFormation.periodStart);
+            setLocalEndDate(selectedFormation.periodEnd);
+        }
+        if (isSingle && single) {
+            setLocalStartDate(single.periodStart);
+            setLocalEndDate(single.periodEnd);
+        }
+    }, [selectedFormation, single, isMulti, isSingle]);
+
+    const startDate = localStartDate;
+    const endDate = localEndDate;
 
     // Date du jour
     const today = new Date();
@@ -75,13 +105,24 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
     const todayM = today.getMonth();
     const todayD = today.getDate();
 
-
-    // Initialiser sur le mois/année du jour
-    const initialMonth = todayM;
-    const initialYear = todayY;
+    // Initialiser sur le mois/année de début de période si présent, sinon sur le jour courant
+    const initialMonth = localStartDate ? new Date(localStartDate).getMonth() : todayM;
+    const initialYear = localStartDate ? new Date(localStartDate).getFullYear() : todayY;
 
     const [month, setMonth] = useState(initialMonth);
     const [year, setYear] = useState(initialYear);
+
+    // Si la formation sélectionnée change (multi ou single), on recale le calendrier sur la période de début si elle existe
+    useEffect(() => {
+        if (localStartDate) {
+            setMonth(new Date(localStartDate).getMonth());
+            setYear(new Date(localStartDate).getFullYear());
+        } else {
+            setMonth(todayM);
+            setYear(todayY);
+        }
+        // eslint-disable-next-line
+    }, [selectedFormation, localStartDate]);
 
     const years = [];
     for (let y = initialYear - 2; y <= initialYear + 4; y++) {
@@ -122,8 +163,7 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
         return d >= s && d <= e;
     }
 
-
-    // Calcul du nombre de jours avant/après la période
+        // Calcul du nombre de jours avant/après la période
     let jValue = null;
     if (startDate) {
         const todayDate = new Date(todayY, todayM, todayD);
@@ -139,16 +179,29 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
         }
     }
 
+    // Sélection de dates sur le calendrier
+    const handleSelect = (date) => {
+        if (!localStartDate || (localStartDate && localEndDate)) {
+            setLocalStartDate(date);
+            setLocalEndDate(null);
+        } else if (date < localStartDate) {
+            setLocalStartDate(date);
+            setLocalEndDate(null);
+        } else {
+            setLocalEndDate(date);
+        }
+    };
+
     const [showMenu, setShowMenu] = useState(false);
 
     return (
         <div>
-            {!multi &&(
+            {!isMulti && isSingle &&(
                 <div>
                     <p className='text-3xl font-semibold' >Période PAE</p>
                 </div>
             )}
-            {multi && (
+            {isMulti && (
                 <div className='flex justify-between items-center' >
                     <p className='text-2xl font-semibold' >Calendrier</p>
                     <div className="relative inline-flex">
@@ -191,7 +244,7 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
                     </div>
                 )}
             </div>
-            {/* Affiche le calendrier de la formation sélectionnée */}
+            {/* Affiche le calendrier de la formation sélectionnée (multi) ou single */}
             {selectedFormation ? (
                 <div>
                     {/* Affichage du calendrier */}
@@ -300,7 +353,9 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
                                                 <button
                                                     type="button"
                                                     className={btnClass}
-                                                    disabled={!currentMonth}>
+                                                    disabled={!currentMonth}
+                                                    onClick={() => handleSelect(date)}
+                                                >
                                                     {day}
                                                 </button>
                                             </div>
@@ -309,24 +364,47 @@ function CalendarSimplePUT({ multi = null, periodStart = null, periodEnd = null 
                                 </div>
                             ))}
                             {/* Affichage de la période sélectionnée */}
-                            {(startDate && endDate) && (
+                            {(localStartDate && localEndDate) && (
                                 <div className="flex items-center justify-between gap-2 mt-4 w-full">
                                     <div className='flex flex-col items-start'>
                                         <span className="block xxs text-gray-700 font-medium">
-                                            {startDate.toLocaleDateString()}
+                                            {localStartDate.toLocaleDateString()}
                                         </span>
                                         <span className='block xxs text-gray-700 font-medium'>
-                                            {endDate.toLocaleDateString()}
+                                            {localEndDate.toLocaleDateString()}
                                         </span>
                                     </div>
                                     <div className='flex gap-2' >
                                         <button
                                             className="px-4 py-2 rounded-md border border-gray-300 bg-white font-semibold text-gray-700 hover:bg-gray-100 transition"
+                                            onClick={() => {
+                                                // Remettre les dates initiales
+                                                if (isMulti && selectedFormation) {
+                                                    setLocalStartDate(selectedFormation.periodStart);
+                                                    setLocalEndDate(selectedFormation.periodEnd);
+                                                }
+                                                if (isSingle && single) {
+                                                    setLocalStartDate(single.periodStart);
+                                                    setLocalEndDate(single.periodEnd);
+                                                }
+                                            }}
                                         >
                                             Annuler
                                         </button>
                                         <button
-                                            className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold text-s hover:bg-blue-700 transition"
+                                            className="px-4 py-2 rounded-md bg-primary text-white font-semibold text-s hover:bg-secondary transition"
+                                            onClick={() => {
+                                                if (isMulti && onSaveMulti && selectedFormation) {
+                                                    onSaveMulti(selectedFormation.id, localStartDate, localEndDate);
+                                                }
+                                                if (isSingle && onSaveSingle && single) {
+                                                    onSaveSingle({
+                                                        ...single,
+                                                        periodStart: localStartDate,
+                                                        periodEnd: localEndDate,
+                                                    });
+                                                }
+                                            }}
                                         >
                                             Sauvegarder
                                         </button>

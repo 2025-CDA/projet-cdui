@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Calendar.css';
 
 // ----------------------
@@ -64,44 +63,62 @@ function getCalendarRows(month, year) {
     return weeks;
 }
 
-// ---------------------------------------------------
-// Composant principal : calendrier double sélection
-// ---------------------------------------------------
-function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }) {
-    // --------------------------
-    // State pour la sélection
-    // --------------------------
-    const [startDate, setStartDate] = useState(periodStart ? new Date(periodStart) : null);
-    const [endDate, setEndDate] = useState(periodEnd ? new Date(periodEnd) : null);
+/**
+ * CalendarDouble : calendrier double avec sélection de formation à gauche (multi)
+ * multi : array d'objets { id, title, periodStart, periodEnd }
+ * onSaveMulti : callback pour sauvegarder les dates d'une formation
+ */
+function CalendarDouble({ multi, onSaveMulti }) {
+    // Formation sélectionnée (par défaut la première)
+    const [selectedIdx, setSelectedIdx] = useState(0);
+    const selectedFormation = multi && multi.length > 0 ? multi[selectedIdx] : null;
 
-    // --------------------------
-    // State pour le mois/année affichés
-    // --------------------------
+    // Dates locales pour la formation sélectionnée
+    const [localStartDate, setLocalStartDate] = useState(selectedFormation?.periodStart || null);
+    const [localEndDate, setLocalEndDate] = useState(selectedFormation?.periodEnd || null);
+
+    // Met à jour les dates locales quand on change de formation
+    // ou quand multi change (ex: après sauvegarde)
+    // ou quand selectedIdx change
+    // ou quand la formation sélectionnée change
+    useEffect(() => {
+        setLocalStartDate(selectedFormation?.periodStart || null);
+        setLocalEndDate(selectedFormation?.periodEnd || null);
+    }, [selectedIdx, multi, selectedFormation]);
+
+    // Initialiser le calendrier sur le mois/année de début de période si présent, sinon sur le jour courant
     const today = new Date();
-    const [month, setMonth] = useState(today.getMonth());
-    const [year, setYear] = useState(today.getFullYear());
+    const initialMonth = localStartDate ? new Date(localStartDate).getMonth() : today.getMonth();
+    const initialYear = localStartDate ? new Date(localStartDate).getFullYear() : today.getFullYear();
+    const [month, setMonth] = useState(initialMonth);
+    const [year, setYear] = useState(initialYear);
+
+    // Recaler le calendrier sur la période de début si la formation sélectionnée change
+    useEffect(() => {
+        if (localStartDate) {
+            setMonth(new Date(localStartDate).getMonth());
+            setYear(new Date(localStartDate).getFullYear());
+        } else {
+            setMonth(today.getMonth());
+            setYear(today.getFullYear());
+        }
+        // eslint-disable-next-line
+    }, [selectedIdx, localStartDate]);
 
     // Liste d'années pour le select
     const years = [];
     for (let y = year - 2; y <= year + 4; y++) years.push(y);
 
-    // --------------------------
-    // Gestion de la sélection de période
-    // --------------------------
+    // Sélection de dates sur le calendrier double
     const handleSelect = (date) => {
-        if (!startDate || (startDate && endDate)) {
-            setStartDate(date);
-            setEndDate(null);
-            onPeriodChange && onPeriodChange(date, null);
-        }
-        else if (date < startDate) {
-            setStartDate(date);
-            setEndDate(null);
-            onPeriodChange && onPeriodChange(date, null);
-        }
-        else {
-            setEndDate(date);
-            onPeriodChange && onPeriodChange(startDate, date);
+        if (!localStartDate || (localStartDate && localEndDate)) {
+            setLocalStartDate(date);
+            setLocalEndDate(null);
+        } else if (date < localStartDate) {
+            setLocalStartDate(date);
+            setLocalEndDate(null);
+        } else {
+            setLocalEndDate(date);
         }
     };
 
@@ -136,19 +153,19 @@ function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }
     // Vérifie si une date est dans la période sélectionnée
     // --------------------------
     const isInPeriod = (date) => {
-        if (!startDate || !endDate) {
+        if (!localStartDate || !localEndDate) {
             return false;
         }
         const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const s = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        const e = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        const s = new Date(localStartDate.getFullYear(), localStartDate.getMonth(), localStartDate.getDate());
+        const e = new Date(localEndDate.getFullYear(), localEndDate.getMonth(), localEndDate.getDate());
         return d >= s && d <= e;
     };
 
     // --------------------------
     // Rendu d'un calendrier simple (mois donné)
     // --------------------------
-    const renderCalendar = (month, year) => {
+        const renderCalendar = (month, year) => {
         const weeks = getCalendarRows(month, year);
         const today = new Date();
         const todayY = today.getFullYear();
@@ -168,8 +185,8 @@ function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }
                     <div key={wi} className="flex">
                         {week.map(({ day, currentMonth, date }, di) => {
                             // Détection du premier et dernier jour de la période
-                            const isStart = startDate && date.getFullYear() === startDate.getFullYear() && date.getMonth() === startDate.getMonth() && date.getDate() === startDate.getDate();
-                            const isEnd = endDate && date.getFullYear() === endDate.getFullYear() && date.getMonth() === endDate.getMonth() && date.getDate() === endDate.getDate();
+                            const isStart = localStartDate && date.getFullYear() === new Date(localStartDate).getFullYear() && date.getMonth() === new Date(localStartDate).getMonth() && date.getDate() === new Date(localStartDate).getDate();
+                            const isEnd = localEndDate && date.getFullYear() === new Date(localEndDate).getFullYear() && date.getMonth() === new Date(localEndDate).getMonth() && date.getDate() === new Date(localEndDate).getDate();
                             const inPeriod = isInPeriod(date);
 
                             // Détection du premier et dernier jour de la semaine
@@ -237,53 +254,86 @@ function CalendarDouble({ periodStart = null, periodEnd = null, onPeriodChange }
     // --------------------------
     // Rendu principal du composant
     // --------------------------
-    return (
-        <div className="space-y-4 p-3 bg-white border border-gray-200 ">
-            {/* Navigation mois/année */}
-            <div className="flex items-center justify-between px-2">
-                <button
-                    type="button"
-                    className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
-                    aria-label="Précédent"
-                    onClick={handlePrev}>
-                    <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <div className="flex gap-55 font-regular text-lg">
-                    <span>
-                        {MONTHS_FR[month]} {year}
-                    </span>
-                    <span>
-                        {MONTHS_FR[(month + 1) % 12]} {month === 11 ? year + 1 : year}
-                    </span>
+        return (
+        <div className="flex flex-col w-full bg-color-background shadow rounded">
+            <div className="flex w-full">
+                {/* Liste des formations à gauche */}
+                <div className="flex flex-col min-w-[220px] border-r border-b border-gray-200 bg-gray-50 py-4 px-2">
+                    {multi && multi.length > 0 ? (
+                        multi.map((formation, idx) => (
+                            <button
+                                key={formation.id}
+                                className={`text-left px-3 py-2 rounded-lg mb-1 transition font-medium text-sm ${
+                                    idx === selectedIdx
+                                        ? "border-2 border-primary"
+                                        : "hover:text-primary"
+                                }`}
+                                onClick={() => setSelectedIdx(idx)}
+                            >
+                                {formation.title}
+                            </button>
+                        ))
+                    ) : (
+                        <div className="text-gray-400 italic">Aucune formation</div>
+                    )}
                 </div>
-                <button
-                    type="button"
-                    className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
-                    aria-label="Suivant"
-                    onClick={handleNext}>
-                    <svg className="shrink-0 size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-            </div>
+                {/* Calendrier double à droite */}
+                <div className="flex-1 space-y-4 p-3 bg-white border-b border-gray-200">
+                    {/* Navigation mois/année */}
+                    <div className="flex items-center justify-between px-2">
+                        <button
+                            type="button"
+                            className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
+                            aria-label="Précédent"
+                            onClick={handlePrev}>
+                            <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <div className="flex font-regular gap-65 text-lg">
+                            <span>
+                                {MONTHS_FR[month]} {year}
+                            </span>
+                            <span>
+                                {MONTHS_FR[(month + 1) % 12]} {month === 11 ? year + 1 : year}
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            className="size-8 flex justify-center items-center text-primary-text hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100"
+                            aria-label="Suivant"
+                            onClick={handleNext}>
+                            <svg className="shrink-0 size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
 
-            {/* Double calendrier côte à côte */}
-            <div className="flex gap-4">
-                {renderCalendar(month, year)}
-                {renderCalendar((month + 1) % 12, month === 11 ? year + 1 : year)}
+                    {/* Double calendrier côte à côte */}
+                    <div className="flex gap-4">
+                        {renderCalendar(month, year)}
+                        {renderCalendar((month + 1) % 12, month === 11 ? year + 1 : year)}
+                    </div>
+                </div>
             </div>
-
             {/* Affichage de la période sélectionnée */}
-            {(startDate && endDate) && (
-                <div className="w-full flex justify-end items-center gap-2 mt-4">
-                    <span className="block text-center text-xs text-gray-700 font-medium">
-                        {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
+            {(localStartDate && localEndDate) && (
+                <div className="w-full flex justify-end items-center gap-2 mt-4 pr-8 pb-4">
+                    <span className="block text-center xxs text-gray-700 font-medium">
+                        {localStartDate.toLocaleDateString()} - {localEndDate.toLocaleDateString()}
                     </span>
                     <button
                         className="px-4 py-2 rounded-md border border-gray-300 bg-white text-xs text-gray-700 hover:bg-gray-100 transition"
+                        onClick={() => {
+                            setLocalStartDate(selectedFormation?.periodStart || null);
+                            setLocalEndDate(selectedFormation?.periodEnd || null);
+                        }}
                     >
                         Annuler
                     </button>
                     <button
-                        className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold text-xs hover:bg-blue-700 transition"
+                        className="px-4 py-2 rounded-md bg-primary text-white font-semibold text-xs hover:bg-secondary transition"
+                        onClick={() => {
+                            if (onSaveMulti && selectedFormation) {
+                                onSaveMulti(selectedFormation.id, localStartDate, localEndDate);
+                            }
+                        }}
                     >
                         Sauvegarder
                     </button>

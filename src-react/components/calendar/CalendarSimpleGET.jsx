@@ -63,7 +63,15 @@ function getCalendarRows(month, year) {
     return weeks;
 }
 
-function CalendarSimple({ periodStart = null, periodEnd = null, shrinkable = false }) {
+function CalendarSimple({ dates, shrinkable = false }) {
+    // Supporte la prop dates (objet contenant periodStart et periodEnd)
+    // Si dates est fourni, on l'utilise, sinon on prend periodStart/periodEnd des props (pour compatibilité)
+    let periodStart = null;
+    let periodEnd = null;
+    if (dates && typeof dates === "object") {
+        periodStart = dates.periodStart ?? null;
+        periodEnd = dates.periodEnd ?? null;
+    }
 
     if (!periodStart && !periodEnd) {
         shrinkable = false;
@@ -72,15 +80,16 @@ function CalendarSimple({ periodStart = null, periodEnd = null, shrinkable = fal
     // Immutable Date, convertir en JS Date
     const startDate = periodStart && periodStart.toDate ? periodStart.toDate() : periodStart;
     const endDate = periodEnd && periodEnd.toDate ? periodEnd.toDate() : periodEnd;
+
     // Date du jour
     const today = new Date();
     const todayY = today.getFullYear();
     const todayM = today.getMonth();
     const todayD = today.getDate();
 
-    // Initialiser sur le mois/année du jour
-    const initialMonth = todayM;
-    const initialYear = todayY;
+    // Initialiser sur le mois/année du jour ou sur la date de début de période si présente
+    const initialMonth = startDate ? startDate.getMonth() : todayM;
+    const initialYear = startDate ? startDate.getFullYear() : todayY;
 
     const [month, setMonth] = useState(initialMonth);
     const [year, setYear] = useState(initialYear);
